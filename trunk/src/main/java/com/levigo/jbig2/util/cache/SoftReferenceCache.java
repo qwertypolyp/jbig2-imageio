@@ -27,7 +27,7 @@ public class SoftReferenceCache implements Cache {
 
   private HashMap<Object, SoftReference<?>> cache = new HashMap<Object, SoftReference<?>>();
 
-  public Object put(Object key, Object value) {
+  public Object put(Object key, Object value, int sizeEstimate) {
     SoftReference<Object> softReferenceToValue = new SoftReference<Object>(value);
     cache.put(key, softReferenceToValue);
     return softReferenceToValue.get();
