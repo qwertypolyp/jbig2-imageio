@@ -180,7 +180,7 @@ public class JBIG2ImageReader extends ImageReader {
   /**
    * This ImageIO plugin doesn't record {@link IIOMetadata}.
    * 
-   * @returns {@code null} at every call.
+   * @return {@code null} at every call.
    */
   @Override
   public IIOMetadata getStreamMetadata() {
