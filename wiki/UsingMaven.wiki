@@ -1,6 +1,6 @@
 #labels Featured,Maven
 = Using the JBIG2 ImageIO-Plugin with Maven =
-The JBIG2 ImageIO-Plugin is not currently available from Maven Central. However, we have set up a Maven repository on this site which contains the artifacts. In order to use this repository, you need to define it inside your pom.xml like this:
+The JBIG2 ImageIO-Plugin is not currently available from Maven Central. However, we have set up a Maven repository on this site to host the artifacts. In order to use this repository, you need to define it inside your pom.xml like this:
 {{{
 <project...>
   ...
