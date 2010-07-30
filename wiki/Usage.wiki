@@ -1,0 +1,15 @@
+#How to use the plugin.
+
+= Introduction =
+Please choose the appropriate section below, depending on whether you need to embed the ImageIO decoder inside your application (which would, for example, be the case if you want to support shared data segments) or you just want to add JBIG2 support to an existing ImageIO-enabled application.
+
+= Using existing ImageIO-based applications =
+Using the JBIG2 plugin with an existing application that already supports Java ImageIO is - at least in theory - very simple: just plunk the plugin jar down into your classpath and you're ready to go. What, exactly, you have to do to achieve this, depends on the application in question. Unfortunately, there is no general way to add the plugin to an application. Some general recommendations:
+  * If you implemented the application yourself: hey, don't look at us. You'll know best what to do. If you build your application using Maven, just pull in the plugin [UsingMaven as a dependency].
+  * Consult the application's manual (well, duh!).
+  * Maybe the application installation has a folder called 'plugins' or somethig. Try putting the jar into it. With some luck, the application will pick it up.
+  * Is the application started using a Unix shell script or Windows batch file? Try to identify where the classpath is assembled and add the plugin jar to it.
+  * As a last resort, you could try to add the plugin jar to the [http://download.oracle.com/javase/1.4.2/docs/guide/extensions/spec.html `ext` directory of your JRE installation]. But please be advised that this is not considered to be good style. 
+
+= Using shared data segments =
+To be written.
