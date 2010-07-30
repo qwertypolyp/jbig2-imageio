@@ -9,7 +9,7 @@ Using the JBIG2 plugin with an existing application that already supports Java I
   * Consult the application's manual (well, duh!).
   * Maybe the application installation has a folder called 'plugins' or somethig. Try putting the jar into it. With some luck, the application will pick it up.
   * Is the application started using a Unix shell script or Windows batch file? Try to identify where the classpath is assembled and add the plugin jar to it.
-  * As a last resort, you could try to add the plugin jar to the [http://download.oracle.com/javase/1.4.2/docs/guide/extensions/spec.html `ext` directory of your JRE installation]. But please be advised that this is not considered to be good style. 
+  * As a last resort, you could try to add the plugin jar to the [http://download.oracle.com/javase/1.4.2/docs/guide/extensions/spec.html lib/ext directory of your JRE installation]. But please be advised that this is not considered to be good style. 
 
 = Using shared data segments =
 To be written.
