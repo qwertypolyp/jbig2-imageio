@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2010 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.util.cache;
@@ -28,18 +26,14 @@ public class SoftReferenceCache implements Cache {
   private HashMap<Object, SoftReference<?>> cache = new HashMap<Object, SoftReference<?>>();
 
   public Object put(Object key, Object value, int sizeEstimate) {
-    SoftReference<Object> softReferenceToValue = new SoftReference<Object>(value);
-    cache.put(key, softReferenceToValue);
-    return softReferenceToValue.get();
+    SoftReference<Object> softReference = new SoftReference<Object>(value);
+    SoftReference<?> oldValue = cache.put(key, softReference);
+    return getValueNullSafe(oldValue);
   }
 
   public Object get(Object key) {
     SoftReference<?> softReference = cache.get(key);
-    if (null == softReference) {
-      return null;
-    }
-
-    return softReference.get();
+    return getValueNullSafe(softReference);
   }
 
   public void clear() {
@@ -47,7 +41,11 @@ public class SoftReferenceCache implements Cache {
   }
 
   public Object remove(Object key) {
-    return cache.remove(key).get();
+    SoftReference<?> removedObj = cache.remove(key);
+    return getValueNullSafe(removedObj);
   }
 
+  private Object getValueNullSafe(SoftReference<?> softReference) {
+    return softReference == null ? null : softReference.get();
+  }
 }

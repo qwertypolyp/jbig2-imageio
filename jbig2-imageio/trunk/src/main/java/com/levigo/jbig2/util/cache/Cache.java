@@ -20,7 +20,14 @@ package com.levigo.jbig2.util.cache;
  */
 public interface Cache {
 
-
+/**
+ * 
+ * @param key
+ * @param value
+ * @param sizeEstimate
+ * 
+ * @return the old object, that was replaced if present. Otherwise {@code null}.
+ */
   Object put(Object key, Object value, int sizeEstimate);
 
   Object get(Object key);
@@ -32,5 +39,10 @@ public interface Cache {
    */
   void clear();
 
+  /**
+   * 
+   * @param key
+   * @return the removed object, if present. Otherwise {@code null}.
+   */
   Object remove(Object key);
 }
