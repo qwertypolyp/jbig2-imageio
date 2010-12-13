@@ -525,17 +525,20 @@ public class Bitmap {
   public Raster getRaster(JBIG2ReadParam param) {
     ResultImageData resultImageData = new ResultImageData(param);
 
-    DataBufferByte dbb = new DataBufferByte(resultImageData.resultByteArray, resultImageData.resultByteArray.length);
+    return createRaster(resultImageData);
+  }
 
-    SampleModel sampleModel = new SinglePixelPackedSampleModel( //
-        DataBuffer.TYPE_BYTE, //
+  private WritableRaster createRaster(ResultImageData resultImageData) {
+    DataBufferByte dbb = new DataBufferByte(resultImageData.resultByteArray, resultImageData.resultByteArray.length);
+    
+    return WritableRaster.createInterleavedRaster( //
+        dbb, //
         resultImageData.targetWidth, //
         resultImageData.targetHeight, //
-        new int[]{
-          0xff
-        });
-
-    return Raster.createWritableRaster(sampleModel, dbb, new Point(0, 0));
+        resultImageData.targetWidth, //
+        1, //
+        new int[1], //
+        new Point(0, 0));
   }
 
   /**
@@ -566,20 +569,7 @@ public class Bitmap {
   }
 
   private BufferedImage createBufferedImage(ResultImageData resultImageData, ColorModel colorModel) {
-
-    DataBufferByte dbb = new DataBufferByte(resultImageData.resultByteArray, resultImageData.resultByteArray.length);
-
-    SampleModel sm = new SinglePixelPackedSampleModel( //
-        DataBuffer.TYPE_BYTE, //
-        resultImageData.targetWidth, //
-        resultImageData.targetHeight, //
-        new int[]{
-          0xff
-        });
-
-    WritableRaster wr = Raster.createWritableRaster(sm, dbb, new Point(0, 0));
-
-    return new BufferedImage(colorModel, wr, colorModel.isAlphaPremultiplied(), null);
+    return new BufferedImage(colorModel, createRaster(resultImageData), colorModel.isAlphaPremultiplied(), null);
   }
 
   private boolean isScaled(Dimension sourceRenderSize) {
