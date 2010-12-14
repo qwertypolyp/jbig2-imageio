@@ -1,9 +1,14 @@
 #summary Release notes of jbig2-imageio project.
 
-=== 1.1 ===
+===1.1=== 
+Release date: 2010-12-13
 
-  * Improvement in raster creation
+Changes:
+  * Improvement: raster creation optimized
+  * Fixed: potential null pointer exception in cache
 
-=== 1.0 ===
+===1.0===
+Release date: 2010-07-29
 
+Changes:
   * Initial upload of this project
