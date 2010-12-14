@@ -1,0 +1,9 @@
+#summary Release notes of jbig2-imageio project.
+
+=== 1.1 ===
+
+  * Improvement in raster creation
+
+=== 1.0 ===
+
+  * Initial upload of this project
