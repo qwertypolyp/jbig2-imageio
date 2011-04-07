@@ -1,12 +1,17 @@
 #summary Release notes of jbig2-imageio project.
 
+===Pending Changes===
+  * FIXED Issue 1: The default read params will return a default image size of 1x1 without claiming the missing input.
+
+----
 ===1.1=== 
 Release date: 2010-12-13
 
 Changes:
   * Improvement: raster creation optimized
-  * Fixed: potential null pointer exception in cache
+  * Fix: potential NPE in cache
 
+----
 ===1.0===
 Release date: 2010-07-29
 
