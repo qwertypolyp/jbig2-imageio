@@ -39,7 +39,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 /**
  * @see ImageReader
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matthäus Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matthï¿½us Krzikalla</a>
  */
 public class JBIG2ImageReader extends ImageReader {
   private static final Logger log = LoggerFactory.getLogger(JBIG2ImageReader.class);
@@ -82,15 +82,15 @@ public class JBIG2ImageReader extends ImageReader {
    */
   @Override
   public ImageReadParam getDefaultReadParam() {
-    int width = 0;
-    int height = 0;
+    int width = 1;
+    int height = 1;
 
     try {
       width = getWidth(0);
       height = getHeight(0);
     } catch (IOException e) {
-      if (log.isErrorEnabled()) {
-        log.error("Default read param could not be determined", e);
+      if (log.isInfoEnabled()) {
+        log.info("Dimensions could not be determined. Returning read params with size 1x1");
       }
     }
 
@@ -307,7 +307,7 @@ public class JBIG2ImageReader extends ImageReader {
   private JBIG2Document getDocument() throws IOException {
     if (this.document == null) {
       if (this.input == null) {
-        throw new IllegalStateException("Input not set.");
+        throw new IOException("Input not set.");
       }
 
       if (this.globals == null) {
