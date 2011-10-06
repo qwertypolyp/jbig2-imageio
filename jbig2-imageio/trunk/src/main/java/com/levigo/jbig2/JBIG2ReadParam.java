@@ -29,7 +29,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
  * This class extends {@code ImageReadParam} and contains region of interest and scale / subsampling
  * functionality
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  */
 public class JBIG2ReadParam extends ImageReadParam {
   private static final Logger log = LoggerFactory.getLogger(JBIG2ReadParam.class);
