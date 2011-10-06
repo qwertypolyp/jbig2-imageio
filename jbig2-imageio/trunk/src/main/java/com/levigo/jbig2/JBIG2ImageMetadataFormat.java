@@ -25,7 +25,7 @@ import javax.imageio.metadata.IIOMetadataFormatImpl;
  * @see IIOMetadataFormat
  * @see IIOMetadataFormatImpl
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class JBIG2ImageMetadataFormat extends IIOMetadataFormatImpl {
