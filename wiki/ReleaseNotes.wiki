@@ -5,7 +5,7 @@ Release date: 2011-10-06
 
 Changes:
   * FIXED Issue 1: The default read params will return a default image size of 1x1 without claiming the missing input.
-  * FIXED Untracked Issue: A black pixel was represented by 1 and a white pixel by 0. For work with image masks the convention says, a black pixel is the minimum and the white pixel is maximum. This corresponds to an additive colorspace. We turned the representation of white and black pixels for conformity. 
+  * FIXED Untracked Issue: A black pixel was represented by 1 and a white pixel by 0. By convention, a black pixel should be the minimum (0x0) and the white pixel the maximum (0xFF). This corresponds to an additive color model. We turned the representation of white and black pixels for conformity. 
 
 ----
 ===1.1=== 
