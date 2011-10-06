@@ -22,7 +22,7 @@ import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
 
 /**
- * Retrieves a {@link Cache} via registered {@link CacheBridge} through META-INF/services lookup.
+ * Retrieves a {@link Cache} via registered {@link CacheBridge} through <code>META-INF/services</code> lookup.
  * 
  * @author <a href="mailto:m.krzikalla@levigo.de">Matthäus Krzikalla</a>
  */
