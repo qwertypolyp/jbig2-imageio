@@ -572,13 +572,10 @@ public class Bitmap {
   }
 
   private Rectangle scaleSourceRegion(Rectangle sr, Dimension srs) {
-
     int x = sr.x * this.width / srs.width;
-
     int y = sr.y * this.height / srs.height;
 
     int width = (sr.width * this.width) / srs.width;
-
     int height = (sr.height * this.height) / srs.height;
 
     return (new Rectangle(x, y, width, height));
@@ -780,8 +777,8 @@ public class Bitmap {
 
     byte[] gray = new byte[size];
 
-    for (int i = 0; i < size; i++) {
-      gray[i] = (byte) (255 - i * 255 / divisor);
+    for (int i = size - 1, s = 0; i >= 0; i--, s++) {
+      gray[i] = (byte) (255 - s * 255 / divisor);
     }
     return new IndexColorModel(8, size, gray, gray, gray);
   }
