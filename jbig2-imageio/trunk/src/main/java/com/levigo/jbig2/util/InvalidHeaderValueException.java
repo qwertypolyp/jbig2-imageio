@@ -20,7 +20,7 @@ package com.levigo.jbig2.util;
 /**
  * Can be used if a segment header value is invalid.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class InvalidHeaderValueException extends JBIG2Exception {

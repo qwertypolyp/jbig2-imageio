@@ -24,7 +24,7 @@ import javax.imageio.spi.ServiceRegistry;
 /**
  * Retrieves a {@link Logger} via registered {@link LoggerBridge} through META-INF/services lookup.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  */
 public class LoggerFactory {
 

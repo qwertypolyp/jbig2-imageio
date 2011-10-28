@@ -29,7 +29,7 @@ import com.levigo.jbig2.TestImage;
  * This class is for debug purpose only. The {@code DictionaryViewer} is able to show a single
  * bitmap or all symbol bitmaps.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 class DictionaryViewer {

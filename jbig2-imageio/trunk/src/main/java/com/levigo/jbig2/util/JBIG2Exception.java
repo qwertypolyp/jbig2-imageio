@@ -20,7 +20,7 @@ package com.levigo.jbig2.util;
 /**
  * Identifies a JBIG2 exception.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class JBIG2Exception extends Exception {

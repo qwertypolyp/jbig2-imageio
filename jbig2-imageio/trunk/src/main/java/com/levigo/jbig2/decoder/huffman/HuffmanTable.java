@@ -27,7 +27,7 @@ import com.levigo.jbig2.JBIG2ImageReader;
 /**
  * This abstract class is the base class for all types of huffman tables.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 public abstract class HuffmanTable {
@@ -35,7 +35,7 @@ public abstract class HuffmanTable {
   /**
    * This static class represents a code for use in huffman tables.
    * 
-   * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+   * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
    * 
    */
   public static class Code {

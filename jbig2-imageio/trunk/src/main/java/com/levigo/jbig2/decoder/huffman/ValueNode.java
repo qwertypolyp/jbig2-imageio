@@ -26,7 +26,7 @@ import com.levigo.jbig2.decoder.huffman.HuffmanTable.Code;
 /**
  * Represents a value node in a huffman tree. It is a leaf of a tree.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 class ValueNode extends Node {

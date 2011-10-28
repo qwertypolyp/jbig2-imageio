@@ -21,7 +21,7 @@ package com.levigo.jbig2.decoder.arithmetic;
  * CX represents the context used by arithmetic decoding and arithmetic integer decoding. It selects
  * the probability estimate and statistics used during decoding procedure.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public final class CX {

@@ -20,12 +20,9 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.IndexColorModel;
 import java.awt.image.Raster;
-import java.awt.image.SampleModel;
-import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
 
 import com.levigo.jbig2.util.CombinationOperator;
@@ -33,7 +30,7 @@ import com.levigo.jbig2.util.CombinationOperator;
 /**
  * This class represents a bi-level image that is organized like a bitmap.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth�us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matthäus Krzikalla</a>
  */
 public class Bitmap {
 
