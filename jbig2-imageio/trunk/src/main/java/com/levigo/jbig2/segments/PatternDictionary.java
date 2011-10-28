@@ -32,7 +32,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 /**
  * This class represents the segment type "Pattern dictionary", 7.4.4.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class PatternDictionary implements Dictionary {

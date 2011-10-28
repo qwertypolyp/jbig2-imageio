@@ -20,7 +20,7 @@ package com.levigo.jbig2.decoder.mmr;
 /**
  * Constants for MMR (de)compression.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 public class MMRConstants {

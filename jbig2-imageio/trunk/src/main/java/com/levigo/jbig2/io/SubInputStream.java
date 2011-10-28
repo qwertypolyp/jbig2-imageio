@@ -28,7 +28,7 @@ import javax.imageio.stream.ImageInputStreamImpl;
  * stream need to deal with synchronization against other users of the same instance, but not
  * against other users of the wrapped stream.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 public class SubInputStream extends ImageInputStreamImpl {

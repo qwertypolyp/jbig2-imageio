@@ -27,7 +27,7 @@ import com.levigo.jbig2.segments.Table;
 /**
  * This class represents a encoded huffman table.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 public class EncodedTable extends HuffmanTable {

@@ -28,7 +28,7 @@ import com.levigo.jbig2.util.InvalidHeaderValueException;
 /**
  * This segment flags an end of stripe (see JBIG2 ISO standard, 7.4.9).
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class EndOfStripe implements SegmentData {

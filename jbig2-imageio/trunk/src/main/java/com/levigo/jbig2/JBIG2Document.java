@@ -33,7 +33,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 /**
  * This class represents the document structure with its pages and global segments.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  */
 class JBIG2Document {
   private static final Logger log = LoggerFactory.getLogger(JBIG2Document.class);

@@ -42,7 +42,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 /**
  * The basic class for all JBIG2 segments.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 @SuppressWarnings("unchecked")

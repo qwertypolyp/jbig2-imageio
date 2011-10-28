@@ -18,7 +18,7 @@
 package com.levigo.jbig2.util.cache;
 
 /**
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  */
 public interface CacheBridge {
 

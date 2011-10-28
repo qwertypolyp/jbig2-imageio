@@ -30,7 +30,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 /**
  * This class represents the segment type "Page information", 7.4.8 (page 73).
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class PageInformation implements SegmentData {

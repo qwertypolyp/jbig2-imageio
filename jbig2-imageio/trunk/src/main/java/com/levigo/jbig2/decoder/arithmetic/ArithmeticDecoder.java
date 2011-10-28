@@ -24,7 +24,7 @@ import javax.imageio.stream.ImageInputStream;
 /**
  * This class represents the arithmetic decoder, described in ISO/IEC 14492:2001 in E.3
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class ArithmeticDecoder {

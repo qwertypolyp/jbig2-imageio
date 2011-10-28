@@ -24,7 +24,7 @@ import javax.imageio.stream.ImageInputStream;
 /**
  * Base class for all nodes in a huffman tree.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 abstract class Node {

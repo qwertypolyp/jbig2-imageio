@@ -20,7 +20,7 @@ package com.levigo.jbig2.util;
 /**
  * This enumeration keeps the available logical operator defined in the JBIG2 ISO standard.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public enum CombinationOperator {

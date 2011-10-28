@@ -24,7 +24,7 @@ import javax.imageio.spi.ServiceRegistry;
 /**
  * Retrieves a {@link Cache} via registered {@link CacheBridge} through <code>META-INF/services</code> lookup.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  */
 public class CacheFactory {
   private static CacheBridge cacheBridge;

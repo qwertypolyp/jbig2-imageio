@@ -28,7 +28,7 @@ import com.levigo.jbig2.util.InvalidHeaderValueException;
 /**
  * This class represents a "Table" segment. It handles custom tables, see Annex B.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * @author Benjamin Zindel
  */
 public class Table implements SegmentData {

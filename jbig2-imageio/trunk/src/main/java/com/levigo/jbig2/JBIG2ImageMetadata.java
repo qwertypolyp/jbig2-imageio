@@ -26,7 +26,7 @@ import org.w3c.dom.Node;
 /**
  * @see IIOMetadata
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class JBIG2ImageMetadata extends IIOMetadata {

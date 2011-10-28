@@ -42,7 +42,7 @@ import javax.swing.JScrollPane;
 /**
  * This is a utility class. It can be used to show intermediary results.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class TestImage extends JFrame {

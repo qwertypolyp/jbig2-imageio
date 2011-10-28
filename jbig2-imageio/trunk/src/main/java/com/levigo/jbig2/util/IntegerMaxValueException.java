@@ -20,7 +20,7 @@ package com.levigo.jbig2.util;
 /**
  * Can be used if the maximum value limit of an integer is exceeded.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matth‰us Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matth√§us Krzikalla</a>
  * 
  */
 public class IntegerMaxValueException extends JBIG2Exception {
