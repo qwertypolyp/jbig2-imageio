@@ -33,7 +33,7 @@ import com.levigo.jbig2.util.CombinationOperator;
 /**
  * This class represents a bi-level image that is organized like a bitmap.
  * 
- * @author <a href="mailto:m.krzikalla@levigo.de">Matthäus Krzikalla</a>
+ * @author <a href="mailto:m.krzikalla@levigo.de">Matthï¿½us Krzikalla</a>
  */
 public class Bitmap {
 
@@ -617,13 +617,16 @@ public class Bitmap {
 
     byte[] newData = new byte[roi.width * roi.height];
 
-    int targetByteIndex = 0;
     int sourceByteIndex = roi.y * this.width + roi.x;
     int skipBytes = this.width - roi.width;
 
-    for (int y = 0; y < roi.height; y++, sourceByteIndex += skipBytes) {
-      for (int x = 0; x < roi.width; x++) {
-        newData[targetByteIndex++] = sourceData[sourceByteIndex++];
+    int height = (roi.y + roi.height) >= this.height ? this.height - roi.y : roi.height;
+
+    int width = (roi.x + roi.width) >= this.width ? this.width - roi.x : roi.width;
+
+    for (int y = 0, targetByteIndex = 0; y < height; y++, sourceByteIndex += skipBytes) {
+      for (int x = 0; x < width; x++, targetByteIndex++, sourceByteIndex++) {
+        newData[targetByteIndex] = sourceData[sourceByteIndex];
       }
     }
     return newData;
