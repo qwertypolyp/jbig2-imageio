@@ -4,6 +4,7 @@
 Release date: not planned
 
 Changes:
+  * FIX Issue 4: `IndexOutOfBoundsException` indicates the end of the stream in `JBIG2Document#reachedEndOfStream()`
   * IMPROVEMENT Issue 3: Reader recognizes if a file header is present or not. 
 
 ----
@@ -13,8 +14,8 @@ Release date: 2011-10-28
 Changes:
   * FIX Untracked Issue: Fixed inverted color model for grayscale images.
   * FIX Untracked Issue: Fixed `IndexArrayOutOfBoundException` in handling requests with region of interests. The region of interest is clipped at image boundary.
-----
 
+----
 ===1.2===
 Release date: 2011-10-06
 
