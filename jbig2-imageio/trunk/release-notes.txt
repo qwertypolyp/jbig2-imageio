@@ -3,6 +3,7 @@ release-notes.txt
 Last fixes:
 
 Version 1.4:
+* FIX Issue 4: IndexOutOfBoundsException indicates the end of the stream in JBIG2Document#reachedEndOfStream()
 * IMPROVEMENT Issue 3: Reader recognizes if a file header is present or not.
 
 Version 1.3 (Bugfix Release):
