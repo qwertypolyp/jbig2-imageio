@@ -2,10 +2,13 @@ release-notes.txt
 
 Last fixes:
 
+Version 1.4:
+* IMPROVEMENT Issue 3: Reader recognizes if a file header is present or not.
+
 Version 1.3 (Bugfix Release):
-* FIXED Untracked Issue: Fixed inverted color model for grayscale images.
-* FIXED Untracked Issue: Fixed IndexArrayOutOfBoundException in handling requests with region of interests. The region of interest is clipped at image boundary.
+* FIX Untracked Issue: Fixed inverted color model for grayscale images.
+* FIX Untracked Issue: Fixed IndexArrayOutOfBoundException in handling requests with region of interests. The region of interest is clipped at image boundary.
 
 Version 1.2 (Bugfix Release):
-* FIXED Issue 1: The default read params will return a default image size of 1x1 without claiming the missing input.
-* FIXED Untracked Issue: A black pixel was represented by 1 and a white pixel by 0. For work with image masks the convention says, a black pixel is the minimum and the white pixel is maximum. This corresponds to an additive colorspace. We turned the representation of white and black pixels for conformity. 
+* FIX Issue 1: The default read params will return a default image size of 1x1 without claiming the missing input.
+* FIX Untracked Issue: A black pixel was represented by 1 and a white pixel by 0. For work with image masks the convention says, a black pixel is the minimum and the white pixel is maximum. This corresponds to an additive colorspace. We turned the representation of white and black pixels for conformity. 
