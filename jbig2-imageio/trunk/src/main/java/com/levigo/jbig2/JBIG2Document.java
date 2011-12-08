@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2010 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -88,27 +86,29 @@ class JBIG2Document {
   /**
    * Flag:
    * <ul>
-   * <li>{@code true} if stream is embedded in another file format</li>
-   * <li>{@code false} if stream is created of a native jbig2 file</li>
+   * <li>{@code true} if stream is embedded in another file format and the file header is missing</li>
+   * <li>{@code false} if stream is created of a native jbig2 file and the file header should be
+   * present</li>
    * </ul>
    */
-  private boolean isEmbedded;
+  private boolean isFileHeaderPresent;
 
   /**
    * Holds a load of segments, that aren't associated with a page.
    */
   private JBIG2Globals globalSegments;
 
-  protected JBIG2Document(ImageInputStream imageInputStream, boolean embedded) throws IOException {
-    isEmbedded = embedded;
+  protected JBIG2Document(ImageInputStream imageInputStream, boolean isFileHeaderPresent) throws IOException {
+    this.isFileHeaderPresent = isFileHeaderPresent;
 
     this.subInputStream = new SubInputStream(imageInputStream, 0, Long.MAX_VALUE);
 
     mapStream();
   }
 
-  protected JBIG2Document(ImageInputStream imageInputStream, boolean embedded, JBIG2Globals globals) throws IOException {
-    isEmbedded = embedded;
+  protected JBIG2Document(ImageInputStream imageInputStream, boolean isFileHeaderPresent, JBIG2Globals globals)
+      throws IOException {
+    this.isFileHeaderPresent = isFileHeaderPresent;
 
     this.subInputStream = new SubInputStream(imageInputStream, 0, Long.MAX_VALUE);
     this.globalSegments = globals;
@@ -174,7 +174,7 @@ class JBIG2Document {
     int segmentType = 0;
 
     /* Sets the basic variables if not embedded */
-    if (!isEmbedded) {
+    if (!isFileHeaderPresent) {
       parseFileHeader();
       offset += fileHeaderLength;
     }
