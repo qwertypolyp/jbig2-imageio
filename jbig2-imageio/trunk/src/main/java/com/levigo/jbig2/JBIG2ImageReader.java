@@ -56,6 +56,11 @@ public class JBIG2ImageReader extends ImageReader {
   /** Globals are JBIG2 segments for PDF wide use. */
   private JBIG2Globals globals;
 
+  /** ID string in file header, see ISO/IEC 14492:2001, D.4.1 */
+  private int[] FILE_HEADER_ID = {
+      0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A
+  };
+
   /**
    * @see ImageReader#ImageReader(ImageReaderSpi)
    */
@@ -220,6 +225,8 @@ public class JBIG2ImageReader extends ImageReader {
       param = (JBIG2ReadParam) getDefaultReadParam();
     }
 
+    isFileHeaderPresent();
+
     JBIG2Page page = getDocument().getPage(imageIndex + 1);
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
 
@@ -301,7 +308,8 @@ public class JBIG2ImageReader extends ImageReader {
   @Override
   public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
     super.setInput(input, seekForwardOnly, ignoreMetadata);
-    this.document = null;
+    document = null;
+    isEmbedded = false;
   }
 
   private JBIG2Document getDocument() throws IOException {
@@ -314,8 +322,26 @@ public class JBIG2ImageReader extends ImageReader {
         log.info("Globals not set.");
       }
 
-      this.document = new JBIG2Document((ImageInputStream) this.input, isEmbedded, this.globals);
+      this.document = new JBIG2Document((ImageInputStream) this.input, isFileHeaderPresent(), this.globals);
     }
     return this.document;
   }
+
+  private boolean isFileHeaderPresent() throws IOException {
+    if (isEmbedded)
+      return true;
+
+    ImageInputStream underTest = (ImageInputStream) input;
+    underTest.mark();
+
+    for (int magicByte : FILE_HEADER_ID) {
+      if (magicByte != underTest.read()) {
+        underTest.reset();
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }
