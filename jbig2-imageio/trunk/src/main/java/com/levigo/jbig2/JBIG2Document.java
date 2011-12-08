@@ -304,6 +304,8 @@ class JBIG2Document {
       return false;
     } catch (EOFException e) {
       return true;
+    } catch (IndexOutOfBoundsException e) {
+      return true;
     }
   }
 
