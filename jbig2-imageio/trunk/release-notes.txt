@@ -2,7 +2,8 @@ release-notes.txt
 
 Last fixes:
 
-Version 1.4:
+Version 1.4 (Bugfix Release):
+* FIX Issue 5: A raster which was too small was created. AWT has thrown a RasterFormatException.  
 * FIX Issue 4: IndexOutOfBoundsException indicates the end of the stream in JBIG2Document#reachedEndOfStream()
 * IMPROVEMENT Issue 3: Reader recognizes if a file header is present or not.
 
