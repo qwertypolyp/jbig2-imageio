@@ -518,12 +518,16 @@ public class Bitmap {
    * @return A new {@link Raster} with
    */
   public Raster getRaster(JBIG2ReadParam param) {
-    ResultImageData resultImageData = new ResultImageData(param);
+    if (pixelArray == null) {
+      initPixelArray();
+      byteArray = null;
+    }
 
-    return createRaster(resultImageData);
+    return createRaster(new ResultImageData(param));
   }
 
   private WritableRaster createRaster(ResultImageData resultImageData) {
+    
     DataBufferByte dbb = new DataBufferByte(resultImageData.resultByteArray, resultImageData.resultByteArray.length);
 
     return WritableRaster.createInterleavedRaster( //
