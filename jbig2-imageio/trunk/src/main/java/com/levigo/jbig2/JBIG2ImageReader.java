@@ -86,13 +86,24 @@ public class JBIG2ImageReader extends ImageReader {
    * @see ImageReader#getDefaultReadParam()
    */
   @Override
-  public ImageReadParam getDefaultReadParam() {
+  public JBIG2ReadParam getDefaultReadParam() {
+    return getDefaultReadParam(0);
+  }
+
+  /**
+   * Returns a default {@linkplain ImageReadParam} object for a specific page.
+   * 
+   * @param imageIndex - The page number.
+   * @return
+   */
+  private JBIG2ReadParam getDefaultReadParam(final int imageIndex) {
     int width = 1;
     int height = 1;
 
     try {
-      width = getWidth(0);
-      height = getHeight(0);
+      final int index = (imageIndex < getDocument().getAmountOfPages()) ? imageIndex : 0;
+      width = getWidth(index);
+      height = getHeight(index);
     } catch (IOException e) {
       if (log.isInfoEnabled()) {
         log.info("Dimensions could not be determined. Returning read params with size 1x1");
@@ -222,17 +233,17 @@ public class JBIG2ImageReader extends ImageReader {
   private BufferedImage createGrayScaleImage(int imageIndex, JBIG2ReadParam param) throws JBIG2Exception, IOException {
     if (param == null) {
       log.info("JBIG2ReadParam not specified. Default will be used.");
-      param = (JBIG2ReadParam) getDefaultReadParam();
+      param = (JBIG2ReadParam) getDefaultReadParam(imageIndex);
     }
 
     isFileHeaderPresent();
 
-    JBIG2Page page = getDocument().getPage(imageIndex + 1);
+    JBIG2Page page = getPage(imageIndex);
+
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
 
-    if (pageBitmap != null) {
+    if (pageBitmap != null)
       return pageBitmap.getBufferedImage(param);
-    }
 
     pageBitmap = page.getBitmap();
     BufferedImage bi = pageBitmap.getBufferedImage(param);
@@ -252,15 +263,15 @@ public class JBIG2ImageReader extends ImageReader {
   public Raster readRaster(int imageIndex, ImageReadParam param) throws IOException {
     if (param == null) {
       log.info("JBIG2ReadParam not specified. Default will be used.");
-      param = (JBIG2ReadParam) getDefaultReadParam();
+      param = (JBIG2ReadParam) getDefaultReadParam(imageIndex);
     }
 
-    JBIG2Page page = getDocument().getPage(imageIndex + 1);
+    JBIG2Page page = getPage(imageIndex);
+
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
 
-    if (pageBitmap != null) {
+    if (pageBitmap != null)
       return pageBitmap.getRaster((JBIG2ReadParam) param);
-    }
 
     try {
       pageBitmap = page.getBitmap();
@@ -325,6 +336,15 @@ public class JBIG2ImageReader extends ImageReader {
       this.document = new JBIG2Document((ImageInputStream) this.input, isFileHeaderPresent(), this.globals);
     }
     return this.document;
+  }
+
+  private JBIG2Page getPage(int imageIndex) throws IOException {
+    JBIG2Page page = getDocument().getPage(imageIndex + 1);
+
+    if (page == null)
+      throw new IndexOutOfBoundsException("Requested page at index=" + imageIndex + " does not exist.");
+
+    return page;
   }
 
   private boolean isFileHeaderPresent() throws IOException {
