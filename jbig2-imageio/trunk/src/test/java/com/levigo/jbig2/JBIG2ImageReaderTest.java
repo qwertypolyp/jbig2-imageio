@@ -18,6 +18,7 @@ package com.levigo.jbig2;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -55,14 +56,9 @@ public class JBIG2ImageReaderTest {
 
   }
 
-  // TESTS WITH TESTOUTPUT
-  // Ignore in build process
-
-  @Ignore
   @Test
   public void testRead() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
-
-    String filepath = "/images/jbig2-stream.jb2";
+    String filepath = "/images/042_1.jb2";
     int imageIndex = 0;
 
     InputStream inputStream = getClass().getResourceAsStream(filepath);
@@ -70,29 +66,81 @@ public class JBIG2ImageReaderTest {
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
 
     JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), true);
-
     imageReader.setInput(imageInputStream);
-    JBIG2ReadParam param = new JBIG2ReadParam(1, 1, 0, 0, new Rectangle(0, 0, 500, 800), new Dimension(500, 800));
 
-    long timeStamp = System.currentTimeMillis();
-    BufferedImage bufferedImage = imageReader.read(imageIndex, param);
-    long duration = System.currentTimeMillis() - timeStamp;
-    System.out.println(filepath + " decoding took " + duration + " ms");
+    // long timeStamp = System.currentTimeMillis();
+    BufferedImage bufferedImage = imageReader.read(imageIndex, imageReader.getDefaultReadParam());
+    // long duration = System.currentTimeMillis() - timeStamp;
+    // System.out.println(filepath + " decoding took " + duration + " ms");
 
-    new TestImage(bufferedImage);
+    Assert.assertNotNull(bufferedImage);
   }
 
-  @Ignore
   @Test
-  public void testReadIntImageReadParamNotEmbedded() throws IOException, InvalidHeaderValueException,
-      IntegerMaxValueException {
+  public void testReadRaster() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
+    String filepath = "/images/042_1.jb2";
+    int imageIndex = 0;
 
-    InputStream inputStream = getClass().getResourceAsStream("/images/042_1.jb2");
+    InputStream inputStream = getClass().getResourceAsStream(filepath);
+    DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
+    ImageInputStream imageInputStream = disf.getInputStream(inputStream);
+
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), true);
+    imageReader.setInput(imageInputStream);
+    Raster raster = imageReader.readRaster(imageIndex, imageReader.getDefaultReadParam());
+
+    Assert.assertNotNull(raster);
+  }
+
+  @Test
+  public void testReadImageReadParamNull() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
+    String filepath = "/images/042_1.jb2";
+    int imageIndex = 0;
+
+    InputStream inputStream = getClass().getResourceAsStream(filepath);
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
     JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
     imageReader.setInput(imageInputStream);
+    BufferedImage bufferedImage = imageReader.read(imageIndex, null);
 
-    new TestImage(imageReader.read(3, null));
+    Assert.assertNotNull(bufferedImage);
   }
+
+  @Test
+  public void testReadRasterImageReadParamNull() throws IOException, InvalidHeaderValueException,
+      IntegerMaxValueException {
+    String filepath = "/images/042_1.jb2";
+    int imageIndex = 0;
+
+    InputStream inputStream = getClass().getResourceAsStream(filepath);
+    DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
+    ImageInputStream imageInputStream = disf.getInputStream(inputStream);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    imageReader.setInput(imageInputStream);
+    Raster raster = imageReader.readRaster(imageIndex, null);
+
+    Assert.assertNotNull(raster);
+  }
+
+  @Test
+  public void testGetNumImages() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
+    String filepath = "/images/002.jb2";
+    int imageIndex = 0;
+    
+    InputStream inputStream = getClass().getResourceAsStream(filepath);
+    DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
+    ImageInputStream imageInputStream = disf.getInputStream(inputStream);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    imageReader.setInput(imageInputStream);
+    int numImages = imageReader.getNumImages(true);
+    Assert.assertEquals(17, numImages);
+  }
+
+  @Test
+  public void testCanReadRaster() throws IOException {
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    Assert.assertTrue(imageReader.canReadRaster());
+  }
+  
 }
