@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2010 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -26,6 +24,7 @@ import java.util.TreeMap;
 
 import com.levigo.jbig2.segments.EndOfStripe;
 import com.levigo.jbig2.segments.PageInformation;
+import com.levigo.jbig2.segments.RegionSegmentInformation;
 import com.levigo.jbig2.util.CombinationOperator;
 import com.levigo.jbig2.util.IntegerMaxValueException;
 import com.levigo.jbig2.util.InvalidHeaderValueException;
@@ -116,7 +115,7 @@ class JBIG2Page {
    */
   protected Bitmap getBitmap() throws JBIG2Exception, IOException {
     long timestamp;
-    
+
     if (JBIG2ImageReader.PERFORMANCE_TEST) {
       timestamp = System.currentTimeMillis();
     }
@@ -181,18 +180,22 @@ class JBIG2Page {
         case 39 : // Immediate lossless generic region
         case 42 : // Immediate generic refinement region
         case 43 : // Immediate lossless generic refinement region
-          Region r = (Region) s.getSegmentData();
+          final Region r = (Region) s.getSegmentData();
 
-          if (countRegions() == 1 && pageInformation.getDefaultPixelValue() == 0) {
+          final Bitmap regionBitmap = r.getRegionBitmap();
 
-            pageBitmap = r.getRegionBitmap();
-
+          // Check if we have only one region that forms the complete page. If the dimension equals
+          // the page's dimension set the region's bitmap as the page's bitmap. Otherwise we have to
+          // blit the smaller region's bitmap into the page's bitmap (see Issue 6).
+          if (countRegions() == 1 && pageInformation.getDefaultPixelValue() == 0
+              && pageInformation.getWidth() == regionBitmap.getWidth()
+              && pageInformation.getHeight() == regionBitmap.getHeight()) {
+            pageBitmap = regionBitmap;
           } else {
-
-            CombinationOperator op = updateCombinationOperator(pageInformation,
-                r.getRegionInfo().getCombinationOperator());
-
-            pageBitmap.blit(r.getRegionBitmap(), r.getRegionInfo().getXLocation(), r.getRegionInfo().getYLocation(), op);
+            final RegionSegmentInformation regionInfo = r.getRegionInfo();
+            final CombinationOperator op = updateCombinationOperator(pageInformation,
+                regionInfo.getCombinationOperator());
+            pageBitmap.blit(regionBitmap, regionInfo.getXLocation(), regionInfo.getYLocation(), op);
           }
 
           break;
