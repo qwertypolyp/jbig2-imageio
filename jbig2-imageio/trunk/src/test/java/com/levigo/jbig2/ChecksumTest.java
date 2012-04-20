@@ -134,7 +134,7 @@ public class ChecksumTest {
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream iis = disf.getInputStream(is);
 
-    JBIG2Document doc = new JBIG2Document(iis, false);
+    JBIG2Document doc = new JBIG2Document(iis);
 
     long time = System.currentTimeMillis();
     Bitmap b = doc.getPage(imageIndex).getBitmap();

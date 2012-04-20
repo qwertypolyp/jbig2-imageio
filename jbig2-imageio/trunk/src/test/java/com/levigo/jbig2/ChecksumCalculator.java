@@ -42,7 +42,7 @@ public class ChecksumCalculator {
     InputStream is = getClass().getResourceAsStream(filepath);
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream iis = disf.getInputStream(is);
-    JBIG2Document doc = new JBIG2Document(iis, false);
+    JBIG2Document doc = new JBIG2Document(iis);
     Bitmap b = doc.getPage(pageNumber).getBitmap();
 
     MessageDigest md = MessageDigest.getInstance("MD5");
