@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2010 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -40,7 +38,7 @@ public class JBIG2ImageReaderDemo {
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
 
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), true);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
 
     imageReader.setInput(imageInputStream);
     JBIG2ReadParam param = imageReader.getDefaultReadParam();

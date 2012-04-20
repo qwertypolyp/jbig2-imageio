@@ -50,36 +50,18 @@ public class JBIG2ImageReader extends ImageReader {
   /** JBIG2 document to which we delegate current work. */
   private JBIG2Document document;
 
-  /** {@code true} if the source is embedded or {@code false} if it is a native jbig2 file. */
-  private boolean isEmbedded;
-
   /** Globals are JBIG2 segments for PDF wide use. */
   private JBIG2Globals globals;
-
-  /** ID string in file header, see ISO/IEC 14492:2001, D.4.1 */
-  private int[] FILE_HEADER_ID = {
-      0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A
-  };
-
-  /**
-   * @see ImageReader#ImageReader(ImageReaderSpi)
-   */
-  protected JBIG2ImageReader(ImageReaderSpi originatingProvider) throws IOException {
-    super(originatingProvider);
-  }
 
   /**
    * @see ImageReader#ImageReader(ImageReaderSpi)
    * 
    * @param originatingProvider - The {@code ImageReaderSpi} that is invoking this constructor, or
    *          {@code null}.
-   * @param isEmbedded - Flag for embedded data. {@code true} if data is embedded, {@code false} if
-   *          data is standalone.
-   * @throws IOException
+   * @throws IOException if something went wrong while reading the provided stream.
    */
-  public JBIG2ImageReader(ImageReaderSpi originatingProvider, boolean isEmbedded) throws IOException {
+  public JBIG2ImageReader(ImageReaderSpi originatingProvider) throws IOException {
     super(originatingProvider);
-    this.isEmbedded = isEmbedded;
   }
 
   /**
@@ -236,8 +218,6 @@ public class JBIG2ImageReader extends ImageReader {
       param = (JBIG2ReadParam) getDefaultReadParam(imageIndex);
     }
 
-    isFileHeaderPresent();
-
     JBIG2Page page = getPage(imageIndex);
 
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
@@ -298,7 +278,7 @@ public class JBIG2ImageReader extends ImageReader {
    * @throws IOException if an error occurs reading the height information from the input source.
    */
   public JBIG2Globals processGlobals(ImageInputStream globalsInputStream) throws IOException {
-    JBIG2Document doc = new JBIG2Document(globalsInputStream, true);
+    JBIG2Document doc = new JBIG2Document(globalsInputStream);
     return doc.getGlobalSegments();
   }
 
@@ -320,7 +300,6 @@ public class JBIG2ImageReader extends ImageReader {
   public void setInput(Object input, boolean seekForwardOnly, boolean ignoreMetadata) {
     super.setInput(input, seekForwardOnly, ignoreMetadata);
     document = null;
-    isEmbedded = false;
   }
 
   private JBIG2Document getDocument() throws IOException {
@@ -333,7 +312,7 @@ public class JBIG2ImageReader extends ImageReader {
         log.info("Globals not set.");
       }
 
-      this.document = new JBIG2Document((ImageInputStream) this.input, isFileHeaderPresent(), this.globals);
+      this.document = new JBIG2Document((ImageInputStream) this.input, this.globals);
     }
     return this.document;
   }
@@ -346,22 +325,4 @@ public class JBIG2ImageReader extends ImageReader {
 
     return page;
   }
-
-  private boolean isFileHeaderPresent() throws IOException {
-    if (isEmbedded)
-      return true;
-
-    ImageInputStream underTest = (ImageInputStream) input;
-    underTest.mark();
-
-    for (int magicByte : FILE_HEADER_ID) {
-      if (magicByte != underTest.read()) {
-        underTest.reset();
-        return true;
-      }
-    }
-
-    return false;
-  }
-
 }

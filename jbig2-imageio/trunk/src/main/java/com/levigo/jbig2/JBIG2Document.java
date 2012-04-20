@@ -36,10 +36,16 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 class JBIG2Document {
   private static final Logger log = LoggerFactory.getLogger(JBIG2Document.class);
 
+  /** ID string in file header, see ISO/IEC 14492:2001, D.4.1 */
+  private int[] FILE_HEADER_ID = {
+      0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A
+  };
+
   /**
    * This map contains all pages of this document. The key is the number of the page.
    */
   private final Map<Integer, JBIG2Page> pages = new TreeMap<Integer, JBIG2Page>();
+
 
   /** BASIC INFORMATION ABOUT THE CURRENT JBIG2 DOCUMENT */
 
@@ -57,6 +63,7 @@ class JBIG2Document {
    * You can use the constants {@link #RANDOM} and {@link JBIG2Document#SEQUENTIAL}.
    */
   private short organisationType = SEQUENTIAL;
+
   public static final int RANDOM = 0;
   public static final int SEQUENTIAL = 1;
 
@@ -91,27 +98,23 @@ class JBIG2Document {
    * present</li>
    * </ul>
    */
-  private boolean isFileHeaderPresent;
 
   /**
    * Holds a load of segments, that aren't associated with a page.
    */
   private JBIG2Globals globalSegments;
 
-  protected JBIG2Document(ImageInputStream imageInputStream, boolean isFileHeaderPresent) throws IOException {
-    this.isFileHeaderPresent = isFileHeaderPresent;
-
-    this.subInputStream = new SubInputStream(imageInputStream, 0, Long.MAX_VALUE);
-
-    mapStream();
+  protected JBIG2Document(ImageInputStream input) throws IOException {
+    this(input, null);
   }
 
-  protected JBIG2Document(ImageInputStream imageInputStream, boolean isFileHeaderPresent, JBIG2Globals globals)
-      throws IOException {
-    this.isFileHeaderPresent = isFileHeaderPresent;
+  protected JBIG2Document(ImageInputStream input, JBIG2Globals globals) throws IOException {
+    if (input == null)
+      throw new IllegalArgumentException("imageInputStream must not be null");
 
-    this.subInputStream = new SubInputStream(imageInputStream, 0, Long.MAX_VALUE);
+    this.subInputStream = new SubInputStream(input, 0, Long.MAX_VALUE);
     this.globalSegments = globals;
+
     mapStream();
   }
 
@@ -168,13 +171,15 @@ class JBIG2Document {
    * This method maps the stream and stores all segments.
    */
   private void mapStream() throws IOException {
-    List<SegmentHeader> segments = new LinkedList<SegmentHeader>();
+    final List<SegmentHeader> segments = new LinkedList<SegmentHeader>();
 
     long offset = 0;
     int segmentType = 0;
 
-    /* Sets the basic variables if not embedded */
-    if (!isFileHeaderPresent) {
+    /*
+     * Parse the file header if there is one.
+     */
+    if (isFileHeaderPresent()) {
       parseFileHeader();
       offset += fileHeaderLength;
     }
@@ -192,7 +197,7 @@ class JBIG2Document {
     while (segmentType != 51 && !reachedEndOfStream(offset)) {
       SegmentHeader segment = new SegmentHeader(this, subInputStream, offset, organisationType);
 
-      int associatedPage = segment.getPageAssociation();
+      final int associatedPage = segment.getPageAssociation();
       segmentType = segment.getSegmentType();
 
       if (associatedPage != 0) {
@@ -226,6 +231,21 @@ class JBIG2Document {
      * set.
      */
     determineRandomDataOffsets(segments, offset);
+  }
+
+  private boolean isFileHeaderPresent() throws IOException {
+    final SubInputStream input = subInputStream;
+    input.mark();
+
+    for (int magicByte : FILE_HEADER_ID) {
+      if (magicByte != input.read()) {
+        input.reset();
+        return false;
+      }
+    }
+
+    input.reset();
+    return true;
   }
 
   /**

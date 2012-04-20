@@ -32,7 +32,7 @@ import javax.imageio.stream.ImageInputStream;
 public class JBIG2ImageReaderSpi extends ImageReaderSpi {
 
   private static final String VENDOR = "levigo solutions gmbh";
-  private static final String VERSION = "4.3.0.3";
+  private static final String VERSION = "1.4.1";
   private static final String READER_CLASS_NAME = "com.levigo.jbig2.JBIG2ImageReader";
   private static final String[] NAMES = {
       "jbig2", "JBIG2"
@@ -89,8 +89,11 @@ public class JBIG2ImageReaderSpi extends ImageReaderSpi {
    */
   @Override
   public boolean canDecodeInput(Object source) throws IOException {
+    if (source == null)
+      throw new IllegalArgumentException("source must not be null");
+
     if (!(source instanceof ImageInputStream)) {
-      System.out.println("Source is not an ImageInputStream");
+      System.out.println("source is not an ImageInputStream");
       return false;
     }
 

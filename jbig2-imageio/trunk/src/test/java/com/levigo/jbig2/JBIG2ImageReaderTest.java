@@ -28,7 +28,6 @@ import javax.imageio.stream.ImageInputStream;
 
 import junit.framework.Assert;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
@@ -39,7 +38,7 @@ public class JBIG2ImageReaderTest {
 
   @Test
   public void testGetDefaultReadParams() throws Exception {
-    ImageReader reader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    ImageReader reader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     ImageReadParam param = reader.getDefaultReadParam();
     Assert.assertNotNull(param);
 
@@ -65,7 +64,7 @@ public class JBIG2ImageReaderTest {
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
 
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), true);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     imageReader.setInput(imageInputStream);
 
     // long timeStamp = System.currentTimeMillis();
@@ -85,7 +84,7 @@ public class JBIG2ImageReaderTest {
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
 
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), true);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     imageReader.setInput(imageInputStream);
     Raster raster = imageReader.readRaster(imageIndex, imageReader.getDefaultReadParam());
 
@@ -100,7 +99,7 @@ public class JBIG2ImageReaderTest {
     InputStream inputStream = getClass().getResourceAsStream(filepath);
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     imageReader.setInput(imageInputStream);
     BufferedImage bufferedImage = imageReader.read(imageIndex, null);
 
@@ -116,7 +115,7 @@ public class JBIG2ImageReaderTest {
     InputStream inputStream = getClass().getResourceAsStream(filepath);
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     imageReader.setInput(imageInputStream);
     Raster raster = imageReader.readRaster(imageIndex, null);
 
@@ -126,12 +125,11 @@ public class JBIG2ImageReaderTest {
   @Test
   public void testGetNumImages() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
     String filepath = "/images/002.jb2";
-    int imageIndex = 0;
-    
+
     InputStream inputStream = getClass().getResourceAsStream(filepath);
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     imageReader.setInput(imageInputStream);
     int numImages = imageReader.getNumImages(true);
     Assert.assertEquals(17, numImages);
@@ -139,8 +137,8 @@ public class JBIG2ImageReaderTest {
 
   @Test
   public void testCanReadRaster() throws IOException {
-    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi(), false);
+    JBIG2ImageReader imageReader = new JBIG2ImageReader(new JBIG2ImageReaderSpi());
     Assert.assertTrue(imageReader.canReadRaster());
   }
-  
+
 }
