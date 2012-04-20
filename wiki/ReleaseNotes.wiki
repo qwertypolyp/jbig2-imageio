@@ -1,5 +1,12 @@
 #summary Release notes of jbig2-imageio project.
 
+===1.4.1===
+Release date: 2012-04-20
+
+Changes:
+  * FIX: Fixed a problem when parsing a multi-page jbig2 file.
+  * IMPROVEMENT: The JBIG2Document class doesn't need the isEmbedded flag anymore. The determination is done automatically and is simply used as an indicator whether the file header is present and should be parsed or not.
+
 ===1.4===
 Release date: 2012-04-10
 
