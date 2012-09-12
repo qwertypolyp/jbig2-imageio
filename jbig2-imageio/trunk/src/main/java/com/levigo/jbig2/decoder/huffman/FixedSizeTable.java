@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 1995-2010 levigo holding gmbh.
+ * Copyright (C) 1995-2012 levigo holding gmbh.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
