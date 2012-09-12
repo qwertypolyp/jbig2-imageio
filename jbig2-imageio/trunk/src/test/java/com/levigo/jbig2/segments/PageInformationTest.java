@@ -26,10 +26,10 @@ import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.*;
 import com.levigo.jbig2.segments.PageInformation;
 import com.levigo.jbig2.util.CombinationOperator;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 public class PageInformationTest {
 

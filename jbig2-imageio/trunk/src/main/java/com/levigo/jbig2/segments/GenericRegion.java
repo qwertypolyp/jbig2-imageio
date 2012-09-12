@@ -25,8 +25,8 @@ import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.decoder.arithmetic.ArithmeticDecoder;
 import com.levigo.jbig2.decoder.arithmetic.CX;
 import com.levigo.jbig2.decoder.mmr.MMRDecompressor;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.SubInputStream;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
 

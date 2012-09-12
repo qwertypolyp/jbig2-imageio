@@ -27,8 +27,8 @@ import javax.imageio.stream.ImageInputStream;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.levigo.jbig2.err.JBIG2Exception;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
-import com.levigo.jbig2.util.JBIG2Exception;
 
 @Ignore
 public class ChecksumCalculator {

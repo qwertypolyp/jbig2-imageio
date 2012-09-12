@@ -21,9 +21,9 @@ import java.io.IOException;
 
 import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.SegmentData;
+import com.levigo.jbig2.err.IntegerMaxValueException;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.SubInputStream;
-import com.levigo.jbig2.util.IntegerMaxValueException;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 /**
  * This segment flags an end of stripe (see JBIG2 ISO standard, 7.4.9).

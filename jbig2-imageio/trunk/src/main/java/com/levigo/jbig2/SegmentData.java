@@ -19,9 +19,9 @@ package com.levigo.jbig2;
 
 import java.io.IOException;
 
+import com.levigo.jbig2.err.IntegerMaxValueException;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.SubInputStream;
-import com.levigo.jbig2.util.IntegerMaxValueException;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 /**
  * Interface for all data parts of segments.

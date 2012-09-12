@@ -33,7 +33,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
-import com.levigo.jbig2.util.JBIG2Exception;
+import com.levigo.jbig2.err.JBIG2Exception;
 import com.levigo.jbig2.util.cache.CacheFactory;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;

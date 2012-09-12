@@ -24,13 +24,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import com.levigo.jbig2.err.IntegerMaxValueException;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
+import com.levigo.jbig2.err.JBIG2Exception;
 import com.levigo.jbig2.segments.EndOfStripe;
 import com.levigo.jbig2.segments.PageInformation;
 import com.levigo.jbig2.segments.RegionSegmentInformation;
 import com.levigo.jbig2.util.CombinationOperator;
-import com.levigo.jbig2.util.IntegerMaxValueException;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
-import com.levigo.jbig2.util.JBIG2Exception;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
 

@@ -29,9 +29,9 @@ import org.junit.Test;
 import com.levigo.jbig2.JBIG2ImageReader;
 import com.levigo.jbig2.JBIG2ImageReaderSpi;
 import com.levigo.jbig2.TestImage;
+import com.levigo.jbig2.err.IntegerMaxValueException;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
-import com.levigo.jbig2.util.IntegerMaxValueException;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 public class TextRegionTest {
 
