@@ -4,7 +4,7 @@
 	<groupId>com.levigo.jbig2</groupId>
 	<artifactId>levigo-jbig2-imageio</artifactId>
 	<name>jbig2-imageio</name>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>1.5.0-SNAPSHOT</version>
 
 	<distributionManagement>
 		<repository>
