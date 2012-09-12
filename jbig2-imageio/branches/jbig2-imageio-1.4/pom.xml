@@ -14,7 +14,7 @@
 	</distributionManagement>
 
 	<scm>
-		<developerConnection>scm:svn:https://jbig2-imageio.googlecode.com/svn/jbig2-imageio/trunk</developerConnection>
+		<developerConnection>scm:svn:https://jbig2-imageio.googlecode.com/svn/jbig2-imageio/branches/jbig2-imageio-1.4</developerConnection>
 	</scm>
 
 	<dependencies>
