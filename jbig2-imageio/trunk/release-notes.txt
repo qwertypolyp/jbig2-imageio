@@ -1,5 +1,14 @@
 release-notes.txt
 
+Version 1.5.0 (2012-MM-DD):
+
+Planned:
+
+* FEATURE: This release will add major features for scaling a requested region of the internal bitmap representation to a result image that can be processed by Java.
+
+Changes done so far:
+
+* Moved Exception-classes to dedicated package: com.levigo.jbig2.err.
 
 Version 1.4.1 (2012-04-20):
 

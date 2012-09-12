@@ -26,10 +26,10 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.CombinationOperator;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 public class HalftoneRegionTest {
 

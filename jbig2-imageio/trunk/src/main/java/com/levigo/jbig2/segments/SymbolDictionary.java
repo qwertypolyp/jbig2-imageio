@@ -32,9 +32,9 @@ import com.levigo.jbig2.decoder.arithmetic.CX;
 import com.levigo.jbig2.decoder.huffman.EncodedTable;
 import com.levigo.jbig2.decoder.huffman.HuffmanTable;
 import com.levigo.jbig2.decoder.huffman.StandardTables;
+import com.levigo.jbig2.err.IntegerMaxValueException;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.SubInputStream;
-import com.levigo.jbig2.util.IntegerMaxValueException;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
 

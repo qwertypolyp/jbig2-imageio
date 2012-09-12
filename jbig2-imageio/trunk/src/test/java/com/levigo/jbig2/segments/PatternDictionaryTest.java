@@ -28,9 +28,9 @@ import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import com.levigo.jbig2.*;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.*;
 import com.levigo.jbig2.segments.*;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 public class PatternDictionaryTest {
   @Test

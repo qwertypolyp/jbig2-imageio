@@ -21,9 +21,9 @@ import java.io.IOException;
 
 import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.SegmentData;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.CombinationOperator;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
 

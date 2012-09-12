@@ -29,11 +29,11 @@ import org.junit.Test;
 
 import com.levigo.jbig2.JBIG2ReadParam;
 import com.levigo.jbig2.TestImage;
+import com.levigo.jbig2.err.InvalidHeaderValueException;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.segments.GenericRegion;
 import com.levigo.jbig2.util.CombinationOperator;
-import com.levigo.jbig2.util.InvalidHeaderValueException;
 
 public class GenericRegionTest {
 

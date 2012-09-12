@@ -15,30 +15,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.levigo.jbig2.util;
+package com.levigo.jbig2.err;
 
 /**
- * Can be used if a segment header value is invalid.
+ * Identifies a JBIG2 exception.
  * 
  * @author <a href="mailto:m.krzikalla@levigo.de">Matthäus Krzikalla</a>
  * 
  */
-public class InvalidHeaderValueException extends JBIG2Exception {
+public class JBIG2Exception extends Exception {
 
-  private static final long serialVersionUID = -5534202639860867867L;
+  private static final long serialVersionUID = 5063673874564442169L;
 
-  public InvalidHeaderValueException() {
+  public JBIG2Exception() {
   }
 
-  public InvalidHeaderValueException(String message) {
+  public JBIG2Exception(String message) {
     super(message);
   }
 
-  public InvalidHeaderValueException(Throwable cause) {
+  public JBIG2Exception(Throwable cause) {
     super(cause);
   }
 
-  public InvalidHeaderValueException(String message, Throwable cause) {
+  public JBIG2Exception(String message, Throwable cause) {
     super(message, cause);
   }
 

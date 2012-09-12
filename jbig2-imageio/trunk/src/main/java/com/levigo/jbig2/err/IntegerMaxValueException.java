@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.levigo.jbig2.util;
+package com.levigo.jbig2.err;
 
 /**
  * Can be used if the maximum value limit of an integer is exceeded.
