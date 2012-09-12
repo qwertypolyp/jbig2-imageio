@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -34,6 +32,7 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
 import com.levigo.jbig2.err.JBIG2Exception;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.util.cache.CacheFactory;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
@@ -207,14 +206,6 @@ public class JBIG2ImageReader extends ImageReader {
    */
   @Override
   public BufferedImage read(int imageIndex, ImageReadParam param) throws IOException {
-    try {
-      return createGrayScaleImage(imageIndex, param instanceof JBIG2ReadParam ? (JBIG2ReadParam) param : null);
-    } catch (JBIG2Exception e) {
-      throw new IOException(e.getMessage());
-    }
-  }
-
-  private BufferedImage createGrayScaleImage(int imageIndex, JBIG2ReadParam param) throws JBIG2Exception, IOException {
     if (param == null) {
       log.info("JBIG2ReadParam not specified. Default will be used.");
       param = (JBIG2ReadParam) getDefaultReadParam(imageIndex);
@@ -224,17 +215,17 @@ public class JBIG2ImageReader extends ImageReader {
 
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
 
-    if (pageBitmap != null)
-      return pageBitmap.getBufferedImage(param);
+    if (pageBitmap == null) {
+      try {
+        pageBitmap = page.getBitmap();
+        CacheFactory.getCache().put(page, pageBitmap, pageBitmap.getSize());
+        page.clearPageData();
+      } catch (JBIG2Exception e) {
+        throw new IOException(e.getMessage());
+      }
+    }
 
-    pageBitmap = page.getBitmap();
-    BufferedImage bi = pageBitmap.getBufferedImage(param);
-
-    CacheFactory.getCache().put(page, pageBitmap, pageBitmap.getWidth() * pageBitmap.getHeight());
-
-    page.clearPageData();
-
-    return bi;
+    return Bitmaps.asBufferedImage(pageBitmap, param);
   }
 
   public boolean canReadRaster() {
@@ -251,23 +242,17 @@ public class JBIG2ImageReader extends ImageReader {
     JBIG2Page page = getPage(imageIndex);
 
     Bitmap pageBitmap = (Bitmap) CacheFactory.getCache().get(page);
-
-    if (pageBitmap != null)
-      return pageBitmap.getRaster((JBIG2ReadParam) param);
-
-    try {
-      pageBitmap = page.getBitmap();
-    } catch (JBIG2Exception e) {
-      throw new IOException(e.getMessage());
+    if (pageBitmap == null) {
+      try {
+        pageBitmap = page.getBitmap();
+        CacheFactory.getCache().put(page, pageBitmap, pageBitmap.getSize());
+        page.clearPageData();
+      } catch (JBIG2Exception e) {
+        throw new IOException(e.getMessage());
+      }
     }
 
-    Raster raster = pageBitmap.getRaster((JBIG2ReadParam) param);
-
-    CacheFactory.getCache().put(page, pageBitmap, pageBitmap.getWidth() * pageBitmap.getHeight());
-
-    page.clearPageData();
-
-    return raster;
+    return Bitmaps.asRaster(pageBitmap, param);
   }
 
   /**

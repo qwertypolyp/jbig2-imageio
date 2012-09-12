@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -34,6 +32,7 @@ import com.levigo.jbig2.decoder.huffman.HuffmanTable;
 import com.levigo.jbig2.decoder.huffman.StandardTables;
 import com.levigo.jbig2.err.IntegerMaxValueException;
 import com.levigo.jbig2.err.InvalidHeaderValueException;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
@@ -478,10 +477,10 @@ public class SymbolDictionary implements Dictionary {
         startColumn += newSymbolsWidths[j];
       }
 
-      Bitmap symbol = heightClassCollectiveBitmap.getRegionOfInterest(new Rectangle(startColumn, 0,
-          newSymbolsWidths[i], heightClassHeight));
-      newSymbols[i] = symbol;
-      sbSymbols.add(symbol);
+      final Rectangle roi = new Rectangle(startColumn, 0, newSymbolsWidths[i], heightClassHeight);
+      final Bitmap symbolBitmap = Bitmaps.extract(roi, heightClassCollectiveBitmap);
+      newSymbols[i] = symbolBitmap;
+      sbSymbols.add(symbolBitmap);
     }
   }
 

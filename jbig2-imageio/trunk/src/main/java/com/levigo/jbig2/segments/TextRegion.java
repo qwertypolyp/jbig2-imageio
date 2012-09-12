@@ -36,6 +36,7 @@ import com.levigo.jbig2.decoder.huffman.StandardTables;
 import com.levigo.jbig2.decoder.huffman.HuffmanTable.Code;
 import com.levigo.jbig2.err.IntegerMaxValueException;
 import com.levigo.jbig2.err.InvalidHeaderValueException;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.CombinationOperator;
 import com.levigo.jbig2.util.log.Logger;
@@ -93,7 +94,7 @@ public class TextRegion implements Region {
   private ArrayList<Bitmap> symbols = new ArrayList<Bitmap>();
 
   private ArithmeticDecoder arithmeticDecoder;
-  private ArithmeticIntegerDecoder iDecoder;
+  private ArithmeticIntegerDecoder integerDecoder;
   private GenericRefinementRegion genericRefinementRegion;
 
   private CX cxIADT;
@@ -342,8 +343,8 @@ public class TextRegion implements Region {
     if (arithmeticDecoder == null)
       arithmeticDecoder = new ArithmeticDecoder(subInputStream);
 
-    if (iDecoder == null)
-      iDecoder = new ArithmeticIntegerDecoder(arithmeticDecoder);
+    if (integerDecoder == null)
+      integerDecoder = new ArithmeticIntegerDecoder(arithmeticDecoder);
   }
 
   private void createRegionBitmap() {
@@ -385,7 +386,7 @@ public class TextRegion implements Region {
         stripT = StandardTables.getTable(11 + sbHuffDT).decode(subInputStream);
       }
     } else {
-      stripT = iDecoder.decode(cxIADT);
+      stripT = integerDecoder.decode(cxIADT);
     }
 
     return stripT * -(sbStrips);
@@ -446,7 +447,7 @@ public class TextRegion implements Region {
         Bitmap ib = decodeIb(r, id);
 
         /* vi) */
-        insertIntoRegionBitmap(ib, t);
+        blit(ib, t);
 
         instanceCounter++;
       }
@@ -465,7 +466,7 @@ public class TextRegion implements Region {
         dT = StandardTables.getTable(11 + sbHuffDT).decode(subInputStream);
       }
     } else {
-      dT = iDecoder.decode(cxIADT);
+      dT = integerDecoder.decode(cxIADT);
     }
 
     return (dT * sbStrips);
@@ -483,7 +484,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(6 + sbHuffFS).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIAFS);
+      return integerDecoder.decode(cxIAFS);
     }
   }
 
@@ -506,7 +507,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(8 + sbHuffDS).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIADS);
+      return integerDecoder.decode(cxIADS);
     }
   }
 
@@ -516,7 +517,7 @@ public class TextRegion implements Region {
       if (isHuffmanEncoded) {
         return subInputStream.readBits(logSBStrips);
       } else {
-        return iDecoder.decode(cxIAIT);
+        return integerDecoder.decode(cxIAIT);
       }
     }
 
@@ -531,7 +532,7 @@ public class TextRegion implements Region {
 
       return symbolCodeTable.decode(subInputStream);
     } else {
-      return iDecoder.decodeIAID(cxIAID, symbolCodeLength);
+      return integerDecoder.decodeIAID(cxIAID, symbolCodeLength);
     }
   }
 
@@ -541,7 +542,7 @@ public class TextRegion implements Region {
       if (isHuffmanEncoded) {
         return subInputStream.readBit();
       } else {
-        return iDecoder.decode(cxIARI);
+        return integerDecoder.decode(cxIARI);
       }
     }
     return 0;
@@ -620,7 +621,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(14 + sbHuffRDWidth).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIARDW);
+      return integerDecoder.decode(cxIARDW);
     }
   }
 
@@ -654,7 +655,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(14 + sbHuffRDHeight).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIARDH);
+      return integerDecoder.decode(cxIARDH);
     }
   }
 
@@ -691,7 +692,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(14 + sbHuffRDX).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIARDX);
+      return integerDecoder.decode(cxIARDX);
     }
   }
 
@@ -732,7 +733,7 @@ public class TextRegion implements Region {
         return StandardTables.getTable(14 + sbHuffRDY).decode(subInputStream);
       }
     } else {
-      return iDecoder.decode(cxIARDY);
+      return integerDecoder.decode(cxIARDY);
     }
   }
 
@@ -779,7 +780,7 @@ public class TextRegion implements Region {
 
   }
 
-  private final void insertIntoRegionBitmap(Bitmap ib, long t) {
+  private final void blit(Bitmap ib, long t) {
 
     if (isTransposed == 0 && (referenceCorner == 2 || referenceCorner == 3)) {
       currentS += ib.getWidth() - 1;
@@ -811,7 +812,7 @@ public class TextRegion implements Region {
       }
     }
 
-    regionBitmap.blit(ib, (int) s, (int) t, combinationOperator);
+    Bitmaps.blit(ib, regionBitmap, (int) s, (int) t, combinationOperator);
 
     /* x) */
     if (isTransposed == 0 && (referenceCorner == 0 || referenceCorner == 1))
@@ -940,7 +941,7 @@ public class TextRegion implements Region {
 
     this.arithmeticDecoder = arithmeticDecoder;
 
-    this.iDecoder = iDecoder;
+    this.integerDecoder = iDecoder;
 
     this.isHuffmanEncoded = isHuffmanEncoded;
     this.useRefinement = sbRefine;

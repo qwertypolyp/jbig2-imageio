@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -21,6 +19,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.util.CombinationOperator;
 
 public class BitmapTest {
@@ -88,11 +87,11 @@ public class BitmapTest {
     byte value1 = 0xA;
     byte value2 = 0xD;
 
-    Assert.assertEquals(0xF, Bitmap.combineBytes(value1, value2, CombinationOperator.OR));
-    Assert.assertEquals(0x8, Bitmap.combineBytes(value1, value2, CombinationOperator.AND));
-    Assert.assertEquals(0x7, Bitmap.combineBytes(value1, value2, CombinationOperator.XOR));
-    Assert.assertEquals(-8, Bitmap.combineBytes(value1, value2, CombinationOperator.XNOR));
-    Assert.assertEquals(value2, Bitmap.combineBytes(value1, value2, CombinationOperator.REPLACE));
+    Assert.assertEquals(0xF, Bitmaps.combineBytes(value1, value2, CombinationOperator.OR));
+    Assert.assertEquals(0x8, Bitmaps.combineBytes(value1, value2, CombinationOperator.AND));
+    Assert.assertEquals(0x7, Bitmaps.combineBytes(value1, value2, CombinationOperator.XOR));
+    Assert.assertEquals(-8, Bitmaps.combineBytes(value1, value2, CombinationOperator.XNOR));
+    Assert.assertEquals(value2, Bitmaps.combineBytes(value1, value2, CombinationOperator.REPLACE));
   }
 
 }
