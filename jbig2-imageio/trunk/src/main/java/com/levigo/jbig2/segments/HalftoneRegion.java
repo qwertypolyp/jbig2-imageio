@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -25,6 +23,7 @@ import com.levigo.jbig2.Bitmap;
 import com.levigo.jbig2.Region;
 import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.err.InvalidHeaderValueException;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.CombinationOperator;
 import com.levigo.jbig2.util.log.Logger;
@@ -39,7 +38,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 public class HalftoneRegion implements Region {
 
   private final Logger log = LoggerFactory.getLogger(HalftoneRegion.class);
-  
+
   private SubInputStream subInputStream;
   private SegmentHeader segmentHeader;
   private long dataHeaderOffset;
@@ -215,7 +214,7 @@ public class HalftoneRegion implements Region {
         // ii)
         final Bitmap currentBitmap = patterns.get(grayScaleValues[m][n]);
 
-        halftoneRegionBitmap.blit(currentBitmap, (x + hGridX), (y + hGridY), hCombinationOperator);
+        Bitmaps.blit(currentBitmap, halftoneRegionBitmap, (x + hGridX), (y + hGridY), hCombinationOperator);
       }
     }
   }
@@ -298,7 +297,7 @@ public class HalftoneRegion implements Region {
         final byte newValue = grayScalePlanes[j + 1].getByte(byteIndex);
         final byte oldValue = grayScalePlanes[j].getByte(byteIndex);
 
-        grayScalePlanes[j].setByte(byteIndex++, Bitmap.combineBytes(oldValue, newValue, CombinationOperator.XOR));
+        grayScalePlanes[j].setByte(byteIndex++, Bitmaps.combineBytes(oldValue, newValue, CombinationOperator.XOR));
       }
     }
     return grayScalePlanes;

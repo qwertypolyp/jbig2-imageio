@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -25,6 +23,7 @@ import com.levigo.jbig2.Bitmap;
 import com.levigo.jbig2.Dictionary;
 import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.err.InvalidHeaderValueException;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.io.SubInputStream;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
@@ -144,28 +143,30 @@ public class PatternDictionary implements Dictionary {
       }
 
       // 2)
-      GenericRegion genericRegion = new GenericRegion(subInputStream);
+      final GenericRegion genericRegion = new GenericRegion(subInputStream);
       genericRegion.setParameters(isMMREncoded, dataOffset, dataLength, hdpHeight, (grayMax + 1) * hdpWidth,
           hdTemplate, false, false, gbAtX, gbAtY);
 
-      Bitmap collectiveBitmap = genericRegion.getRegionBitmap();
+      final Bitmap collectiveBitmap = genericRegion.getRegionBitmap();
 
       // 4)
-      createSubImages(collectiveBitmap);
+      extractPatterns(collectiveBitmap);
     }
 
     return patterns;
   }
 
-  private void createSubImages(Bitmap collectiveBitmap) {
+  private void extractPatterns(Bitmap collectiveBitmap) {
     // 3)
     int gray = 0;
     patterns = new ArrayList<Bitmap>(grayMax + 1);
 
     // 4)
     while (gray <= grayMax) {
-      // 4) a) Create subimage
-      patterns.add(collectiveBitmap.getRegionOfInterest(new Rectangle(hdpWidth * gray, 0, hdpWidth, hdpHeight)));
+      // 4) a) Retrieve a pattern bitmap by extracting it out of the collective bitmap
+      final Rectangle roi = new Rectangle(hdpWidth * gray, 0, hdpWidth, hdpHeight);
+      final Bitmap patternBitmap = Bitmaps.extract(roi, collectiveBitmap);
+      patterns.add(patternBitmap);
 
       // 4) b)
       gray++;
