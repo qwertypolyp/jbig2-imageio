@@ -18,16 +18,20 @@ import com.levigo.jbig2.util.CombinationOperator;
 public class Bitmaps {
 
   public static WritableRaster asRaster(Bitmap bitmap) {
+    return asRaster(bitmap, FilterType.Gaussian);
+  }
+
+  public static WritableRaster asRaster(Bitmap bitmap, FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
     final JBIG2ReadParam param = new JBIG2ReadParam(1, 1, 0, 0, new Rectangle(0, 0, bitmap.getWidth(),
         bitmap.getHeight()), new Dimension(bitmap.getWidth(), bitmap.getHeight()));
 
-    return asRaster(bitmap, param);
+    return asRaster(bitmap, param, filterType);
   }
 
-  public static WritableRaster asRaster(Bitmap bitmap, ImageReadParam param) {
+  public static WritableRaster asRaster(Bitmap bitmap, ImageReadParam param, FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
@@ -35,15 +39,63 @@ public class Bitmaps {
       throw new IllegalArgumentException("param must not be null");
 
     final Dimension sourceRenderSize = param.getSourceRenderSize();
-    final double scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
-    final double scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
 
-    final Rectangle roi = param.getSourceRegion();
-    if (!bitmap.getBounds().equals(roi)) {
-      bitmap = Bitmaps.extract(roi, bitmap);
+    double scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
+    double scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
+
+    if (!bitmap.getBounds().equals(param.getSourceRegion())) {
+      bitmap = Bitmaps.extract(param.getSourceRegion(), bitmap);
     }
-    
-    // TODO subsampling
+
+    /*
+     * Subsampling is the advance of columns/rows for each pixel in the according direction. The
+     * resulting image's quality will be bad because we loose information if we step over
+     * columns/rows. For example, a thin line (1 pixel high) may disappear completely. To avoid this
+     * we will use resize filters. The resize filters use scale factors, one for horizontal and
+     * vertical direction. We care about the given subsampling steps by adjusting the scale factors.
+     * 
+     * There is a reason for subsampling in its original manner only if no scaling is performed.
+     */
+
+    final boolean requiresScaling = scaleX != 1 || scaleY != 1;
+
+    final boolean requiresXSubsampling = param.getSourceXSubsampling() != 1;
+    final boolean requiresYSubsampling = param.getSourceYSubsampling() != 1;
+
+    if (requiresXSubsampling && requiresYSubsampling) {
+      // Apply vertical and horizontal subsampling
+      if (requiresScaling) {
+        scaleX /= (double) param.getSourceXSubsampling();
+        scaleY /= (double) param.getSourceYSubsampling();
+      } else {
+        bitmap = subsample(bitmap, param);
+        // Debug output
+        // System.out.println("Raster created with subsampling x and y");
+      }
+    } else {
+      if (requiresXSubsampling) {
+        // Apply horizontal subsampling only
+        if (requiresScaling) {
+          scaleX /= (double) param.getSourceXSubsampling();
+        } else {
+          bitmap = Bitmaps.subsampleX(bitmap, param);
+          // Debug output
+          // System.out.println("Raster created with subsampling x");
+        }
+      }
+
+      if (requiresYSubsampling) {
+        // Apply vertical subsampling only
+        if (requiresScaling) {
+          scaleY /= (double) param.getSourceYSubsampling();
+        } else {
+          bitmap = Bitmaps.subsampleY(bitmap, param);
+          // Debug output
+          // System.out.println("Raster created with subsampling y");
+        }
+      }
+
+    }
 
     final Rectangle dstBounds = new Rectangle(0, 0, (int) Math.round(bitmap.getWidth() * scaleX),
         (int) Math.round(bitmap.getHeight() * scaleY));
@@ -51,9 +103,8 @@ public class Bitmaps {
     final WritableRaster dst = WritableRaster.createInterleavedRaster(DataBuffer.TYPE_BYTE, dstBounds.width,
         dstBounds.height, 1, new Point());
 
-    final boolean requiresScaling = scaleX != 1 || scaleY != 1;
     if (requiresScaling) {
-      Resize resizer = new Resize(scaleX, scaleY) {
+      final Resize resizer = new Resize(scaleX, scaleY) {
 
         @Override
         protected Scanline createScanline(Object src, Object dst, int length) {
@@ -73,10 +124,12 @@ public class Bitmaps {
         }
       };
 
-      Filter filter = Filter.byType(FilterType.Gaussian);
+      final Filter filter = Filter.byType(filterType);
+
       resizer.resize(bitmap, bitmap.getBounds(), dst, dstBounds, filter, filter);
 
-      System.out.println("Raster created and scaling applied");
+      // Debug output
+      // System.out.println("Raster created and scaling applied");
     } else {
       int byteIndex = 0;
       for (int y = 0; y < bitmap.getHeight(); y++) {
@@ -87,31 +140,36 @@ public class Bitmaps {
             dst.setSample(x, y, 0, (oldByte >> minorX) & 0x1);
           }
         }
-        System.out.println("Raster created without scaling");
       }
+      // Debug output
+      // System.out.println("Raster created without scaling");
 
     }
     return dst;
   }
 
   public static BufferedImage asBufferedImage(Bitmap bitmap) {
+    return asBufferedImage(bitmap, FilterType.Gaussian);
+  }
+
+  public static BufferedImage asBufferedImage(Bitmap bitmap, FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
     final JBIG2ReadParam param = new JBIG2ReadParam(1, 1, 0, 0, new Rectangle(0, 0, bitmap.getWidth(),
         bitmap.getHeight()), new Dimension(bitmap.getWidth(), bitmap.getHeight()));
 
-    return asBufferedImage(bitmap, param);
+    return asBufferedImage(bitmap, param, filterType);
   }
 
-  public static BufferedImage asBufferedImage(Bitmap bitmap, ImageReadParam param) {
+  public static BufferedImage asBufferedImage(Bitmap bitmap, ImageReadParam param, FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
     if (param == null)
       throw new IllegalArgumentException("param must not be null");
 
-    final WritableRaster raster = asRaster(bitmap, param);
+    final WritableRaster raster = asRaster(bitmap, param, filterType);
     final Dimension sourceRenderSize = param.getSourceRenderSize();
     final double scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
     final double scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
@@ -233,6 +291,84 @@ public class Bitmaps {
    */
   private static byte unpad(int padding, byte value) {
     return (byte) (value >> padding << padding);
+  }
+
+  public static Bitmap subsample(Bitmap src, ImageReadParam param) {
+    if (src == null)
+      throw new IllegalArgumentException("src must not be null");
+
+    if (param == null)
+      throw new IllegalArgumentException("param must not be null");
+
+    final int xSubsampling = param.getSourceXSubsampling();
+    final int ySubsampling = param.getSourceYSubsampling();
+    final int xSubsamplingOffset = param.getSubsamplingXOffset();
+    final int ySubsamplingOffset = param.getSubsamplingYOffset();
+
+    final int dstWidth = (src.getWidth() - xSubsamplingOffset) / xSubsampling;
+    final int dstHeight = (src.getHeight() - ySubsamplingOffset) / ySubsampling;
+
+    final Bitmap dst = new Bitmap(dstWidth, dstHeight);
+
+    for (int yDst = 0, ySrc = ySubsamplingOffset; yDst < dst.getHeight(); yDst++, ySrc += ySubsampling) {
+      for (int xDst = 0, xSrc = xSubsamplingOffset; xDst < dst.getWidth(); xDst++, xSrc += xSubsampling) {
+        final byte pixel = src.getPixel(xSrc, ySrc);
+        if (pixel != 0)
+          dst.setPixel(xDst, yDst, pixel);
+      }
+    }
+
+    return dst;
+  }
+
+  public static Bitmap subsampleX(Bitmap src, ImageReadParam param) {
+    if (src == null)
+      throw new IllegalArgumentException("src must not be null");
+
+    if (param == null)
+      throw new IllegalArgumentException("param must not be null");
+
+    final int xSubsampling = param.getSourceXSubsampling();
+    final int xSubsamplingOffset = param.getSubsamplingXOffset();
+
+    final int dstHeight = (src.getWidth() - xSubsamplingOffset) / xSubsampling;
+
+    final Bitmap dst = new Bitmap(src.getWidth(), dstHeight);
+
+    for (int yDst = 0; yDst < dst.getHeight(); yDst++) {
+      for (int xDst = 0, xSrc = xSubsamplingOffset; xDst < dst.getWidth(); xDst++, xSrc += xSubsampling) {
+        final byte pixel = src.getPixel(xSrc, yDst);
+        if (pixel != 0)
+          dst.setPixel(xDst, yDst, pixel);
+      }
+    }
+
+    return dst;
+  }
+
+  public static Bitmap subsampleY(Bitmap src, ImageReadParam param) {
+    if (src == null)
+      throw new IllegalArgumentException("src must not be null");
+
+    if (param == null)
+      throw new IllegalArgumentException("param must not be null");
+
+    final int ySubsampling = param.getSourceYSubsampling();
+    final int ySubsamplingOffset = param.getSubsamplingYOffset();
+
+    final int dstWidth = (src.getWidth() - ySubsamplingOffset) / ySubsampling;
+
+    final Bitmap dst = new Bitmap(dstWidth, src.getHeight());
+
+    for (int yDst = 0, ySrc = ySubsamplingOffset; yDst < dst.getHeight(); yDst++, ySrc += ySubsampling) {
+      for (int xDst = 0; xDst < dst.getWidth(); xDst++) {
+        final byte pixel = src.getPixel(xDst, ySrc);
+        if (pixel != 0)
+          dst.setPixel(xDst, yDst, pixel);
+      }
+    }
+
+    return dst;
   }
 
   /**

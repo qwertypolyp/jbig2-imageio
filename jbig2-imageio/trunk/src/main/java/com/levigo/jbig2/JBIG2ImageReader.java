@@ -33,6 +33,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import com.levigo.jbig2.err.JBIG2Exception;
 import com.levigo.jbig2.image.Bitmaps;
+import com.levigo.jbig2.image.FilterType;
 import com.levigo.jbig2.util.cache.CacheFactory;
 import com.levigo.jbig2.util.log.Logger;
 import com.levigo.jbig2.util.log.LoggerFactory;
@@ -225,7 +226,7 @@ public class JBIG2ImageReader extends ImageReader {
       }
     }
 
-    return Bitmaps.asBufferedImage(pageBitmap, param);
+    return Bitmaps.asBufferedImage(pageBitmap, param, FilterType.Gaussian);
   }
 
   public boolean canReadRaster() {
@@ -252,7 +253,7 @@ public class JBIG2ImageReader extends ImageReader {
       }
     }
 
-    return Bitmaps.asRaster(pageBitmap, param);
+    return Bitmaps.asRaster(pageBitmap, param, FilterType.Gaussian);
   }
 
   /**
