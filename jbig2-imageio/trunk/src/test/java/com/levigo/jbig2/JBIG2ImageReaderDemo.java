@@ -15,8 +15,6 @@
 
 package com.levigo.jbig2;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +42,9 @@ public class JBIG2ImageReaderDemo {
 
     imageReader.setInput(imageInputStream);
     JBIG2ReadParam param = imageReader.getDefaultReadParam();
-    param.setSourceRegion(new Rectangle(200, 200, 500, 500));
-    param.setSourceRenderSize(new Dimension(576, 780));
+    // param.setSourceRegion(new Rectangle(200, 200, 1500, 1500));
+    // param.setSourceRenderSize(new Dimension(864, 1170));
+    param.setSourceSubsampling(3, 3, 0, 0);
 
     long timeStamp = System.currentTimeMillis();
     BufferedImage bufferedImage = imageReader.read(imageIndex, param);

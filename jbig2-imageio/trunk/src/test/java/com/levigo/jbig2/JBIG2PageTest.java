@@ -27,6 +27,7 @@ import org.junit.Test;
 
 import com.levigo.jbig2.err.JBIG2Exception;
 import com.levigo.jbig2.image.Bitmaps;
+import com.levigo.jbig2.image.FilterType;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 
 public class JBIG2PageTest {
@@ -48,7 +49,7 @@ public class JBIG2PageTest {
 
     Bitmap pageBitmap = doc.getPage(pageNumber).getBitmap();
     BufferedImage b = Bitmaps.asBufferedImage(pageBitmap, new JBIG2ReadParam(1, 1, 0, 0, new Rectangle(166, 333, 555,
-        444), null));
+        444), null), FilterType.Gaussian);
     new TestImage(b);
   }
 

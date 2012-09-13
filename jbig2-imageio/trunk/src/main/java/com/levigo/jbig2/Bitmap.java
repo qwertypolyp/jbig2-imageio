@@ -72,6 +72,17 @@ public class Bitmap {
     int toShift = 7 - bitOffset;
     return (byte) ((this.getByte(byteIndex) >> toShift) & 0x01);
   }
+  
+  public void setPixel(int x, int y, byte pixelValue) {
+    final int byteIndex = getByteIndex(x, y);
+    final int bitOffset = getBitOffset(x);
+    
+    final int shift = 7 - bitOffset;
+    
+    final byte src = bitmap[byteIndex];
+    final byte result = (byte) (src | (pixelValue << shift));
+    bitmap[byteIndex] = result;
+  }
 
   /**
    * 
