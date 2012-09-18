@@ -1,17 +1,18 @@
 #summary Release notes of jbig2-imageio project.
 
 ===1.5.0===
-Release date: pending
-
-Planned changes:
-  * FEATURE: This release will add major features for scaling a requested region of the internal bitmap representation to a result image that can be processed by Java.
+*Release date: pending*
 
 Changes done so far:
-  * Moved Exception-classes to dedicated package: `com.levigo.jbig2.err`
+  * Moved exception classes to `com.levigo.jbig2.err` package.
+  * Introduced new utility class `com.levigo.jbig2.image.Bitmaps` that provides a bunch of new features operating on a Bitmap instance. For example:
+    * extracting a region of interest
+    * scaling with high-quality filters
+    * subsampling in either or both horizontal and vertical direction.
 
 ----
 ===1.4.1===
-Release date: 2012-04-20
+*Release date: 2012-04-20*
 
 Changes:
   * FIX: Fixed a problem when parsing a multi-page jbig2 file.
@@ -19,7 +20,7 @@ Changes:
 
 ----
 ===1.4===
-Release date: 2012-04-10
+*Release date: 2012-04-10*
 
 Changes:
   * FIX Issue 6: The returned bitmap was too small in case of only one region. Solution is to check if we have only one region that forms the complete page. Only if width and height of region equals width and height of page use region's bitmap as the page's bitmap.
@@ -29,7 +30,7 @@ Changes:
 
 ----
 ===1.3 (Bugfix Release)===
-Release date: 2011-10-28
+*Release date: 2011-10-28*
 
 Changes:
   * FIX Untracked Issue: Fixed inverted color model for grayscale images.
@@ -37,7 +38,7 @@ Changes:
 
 ----
 ===1.2 (Bugfix Release)===
-Release date: 2011-10-06
+*Release date: 2011-10-06*
 
 Changes:
   * FIX Issue 1: The default read params will return a default image size of 1x1 without claiming the missing input.
@@ -45,7 +46,7 @@ Changes:
 
 ----
 ===1.1=== 
-Release date: 2010-12-13
+*Release date: 2010-12-13*
 
 Changes:
   * IMPROVEMENT: raster creation optimized
@@ -53,7 +54,7 @@ Changes:
 
 ----
 ===1.0===
-Release date: 2010-07-29
+*Release date: 2010-07-29*
 
 Changes:
   * Initial upload of this project
