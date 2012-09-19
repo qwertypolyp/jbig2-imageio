@@ -15,14 +15,22 @@
 
 package com.levigo.jbig2;
 
+import static org.junit.Assert.*;
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.levigo.jbig2.image.Bitmaps;
-import com.levigo.jbig2.util.CombinationOperator;
-
 public class BitmapTest {
+
+  @Test
+  public void getPixelAndSetPixelTest() {
+    final Bitmap bitmap = new Bitmap(37, 49);
+    assertEquals(0, bitmap.getPixel(3, 19));
+    
+    bitmap.setPixel(3, 19, (byte) 1);
+
+    assertEquals(1, bitmap.getPixel(3, 19));
+  }
 
   @Test
   public void getByteAndSetByteTest() {
@@ -32,8 +40,8 @@ public class BitmapTest {
     bitmap.setByte(0, value);
     bitmap.setByte(31, value);
 
-    Assert.assertEquals(value, bitmap.getByte(0));
-    Assert.assertEquals(value, bitmap.getByte(31));
+    assertEquals(value, bitmap.getByte(0));
+    assertEquals(value, bitmap.getByte(31));
   }
 
   @Test(expected = IndexOutOfBoundsException.class)
@@ -80,18 +88,6 @@ public class BitmapTest {
     int width = 16;
     Bitmap bitmap = new Bitmap(width, 1);
     Assert.assertEquals(width, bitmap.getWidth());
-  }
-
-  @Test
-  public void combineBytesTest() {
-    byte value1 = 0xA;
-    byte value2 = 0xD;
-
-    Assert.assertEquals(0xF, Bitmaps.combineBytes(value1, value2, CombinationOperator.OR));
-    Assert.assertEquals(0x8, Bitmaps.combineBytes(value1, value2, CombinationOperator.AND));
-    Assert.assertEquals(0x7, Bitmaps.combineBytes(value1, value2, CombinationOperator.XOR));
-    Assert.assertEquals(-8, Bitmaps.combineBytes(value1, value2, CombinationOperator.XNOR));
-    Assert.assertEquals(value2, Bitmaps.combineBytes(value1, value2, CombinationOperator.REPLACE));
   }
 
 }

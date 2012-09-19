@@ -24,7 +24,7 @@ import java.awt.image.SinglePixelPackedSampleModel;
 import java.awt.image.WritableRaster;
 
 
-public abstract class Scanline {
+abstract class Scanline {
   public interface ScanlineFilter {
     public void filter(int x, int y, int componentIndex, Object data, int length);
   }

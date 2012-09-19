@@ -24,7 +24,6 @@ import org.junit.*;
 
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 
-// @Ignore
 public class ArithmeticDecoderTest {
 
   long[][] tracedata = { //

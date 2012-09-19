@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.image;
@@ -57,21 +55,32 @@ public class Bitmaps {
 
     final Dimension sourceRenderSize = param.getSourceRenderSize();
 
-    double scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
-    double scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
+    double scaleX;
+    double scaleY;
+    if (sourceRenderSize != null) {
+      scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
+      scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
+    } else {
+      scaleX = scaleY = 1;
+    }
 
-    if (!bitmap.getBounds().equals(param.getSourceRegion())) {
-      bitmap = Bitmaps.extract(param.getSourceRegion(), bitmap);
+    Rectangle sourceRegion = param.getSourceRegion();
+    if (sourceRegion != null && !bitmap.getBounds().equals(sourceRegion)) {
+      // make sure we don't request an area outside of the source bitmap
+      sourceRegion = bitmap.getBounds().intersection(sourceRegion);
+
+      // get region of interest
+      bitmap = Bitmaps.extract(sourceRegion, bitmap);
     }
 
     /*
      * Subsampling is the advance of columns/rows for each pixel in the according direction. The
      * resulting image's quality will be bad because we loose information if we step over
      * columns/rows. For example, a thin line (1 pixel high) may disappear completely. To avoid this
-     * we will use resize filters. The resize filters use scale factors, one for horizontal and
-     * vertical direction. We care about the given subsampling steps by adjusting the scale factors.
-     * 
-     * There is a reason for subsampling in its original manner only if no scaling is performed.
+     * we use resize filters if scaling will be performed anyway. The resize filters use scale
+     * factors, one for horizontal and vertical direction. We care about the given subsampling steps
+     * by adjusting the scale factors. If scaling is not performed, subsampling is performed in its
+     * original manner.
      */
 
     final boolean requiresScaling = scaleX != 1 || scaleY != 1;
@@ -86,8 +95,6 @@ public class Bitmaps {
         scaleY /= (double) param.getSourceYSubsampling();
       } else {
         bitmap = subsample(bitmap, param);
-        // Debug output
-        // System.out.println("Raster created with subsampling x and y");
       }
     } else {
       if (requiresXSubsampling) {
@@ -95,9 +102,7 @@ public class Bitmaps {
         if (requiresScaling) {
           scaleX /= (double) param.getSourceXSubsampling();
         } else {
-          bitmap = Bitmaps.subsampleX(bitmap, param);
-          // Debug output
-          // System.out.println("Raster created with subsampling x");
+          bitmap = Bitmaps.subsampleX(bitmap, param.getSourceXSubsampling(), param.getSubsamplingXOffset());
         }
       }
 
@@ -106,61 +111,38 @@ public class Bitmaps {
         if (requiresScaling) {
           scaleY /= (double) param.getSourceYSubsampling();
         } else {
-          bitmap = Bitmaps.subsampleY(bitmap, param);
-          // Debug output
-          // System.out.println("Raster created with subsampling y");
+          bitmap = Bitmaps.subsampleY(bitmap, param.getSourceYSubsampling(), param.getSubsamplingYOffset());
         }
       }
-
     }
 
+    return getRaster(bitmap, filterType, scaleX, scaleY);
+  }
+
+  private static WritableRaster getRaster(Bitmap bitmap, FilterType filterType, double scaleX, double scaleY) {
     final Rectangle dstBounds = new Rectangle(0, 0, (int) Math.round(bitmap.getWidth() * scaleX),
         (int) Math.round(bitmap.getHeight() * scaleY));
 
     final WritableRaster dst = WritableRaster.createInterleavedRaster(DataBuffer.TYPE_BYTE, dstBounds.width,
         dstBounds.height, 1, new Point());
 
-    if (requiresScaling) {
-      final Resize resizer = new Resize(scaleX, scaleY) {
-
-        @Override
-        protected Scanline createScanline(Object src, Object dst, int length) {
-          if (src == null)
-            throw new IllegalArgumentException("src must not be null");
-
-          if (!(src instanceof Bitmap))
-            throw new IllegalArgumentException("src must be from type " + Bitmap.class.getName());
-
-          if (dst == null)
-            throw new IllegalArgumentException("dst must not be null");
-
-          if (!(dst instanceof WritableRaster))
-            throw new IllegalArgumentException("dst must be from type " + WritableRaster.class.getName());
-
-          return new BitmapScanline((Bitmap) src, (WritableRaster) dst, length);
-        }
-      };
-
+    if (scaleX != 1 || scaleY != 1) {
+      // scaling required
+      final Resizer resizer = new Resizer(scaleX, scaleY);
       final Filter filter = Filter.byType(filterType);
-
       resizer.resize(bitmap, bitmap.getBounds(), dst, dstBounds, filter, filter);
-
-      // Debug output
-      // System.out.println("Raster created and scaling applied");
     } else {
+      // scaling not required, paste bitmap into raster pixel per pixel
       int byteIndex = 0;
       for (int y = 0; y < bitmap.getHeight(); y++) {
         for (int x = 0; x < bitmap.getWidth();) {
-          final byte oldByte = (byte) ~bitmap.getByte(byteIndex++);
-          final int minorWidth = bitmap.getWidth() - x > 8 ? 8 : bitmap.getWidth() - x;
-          for (int minorX = minorWidth - 1; minorX >= 0; minorX--, x++) {
-            dst.setSample(x, y, 0, (oldByte >> minorX) & 0x1);
+          final byte pixels = (byte) ~bitmap.getByte(byteIndex++);
+          final int byteWidth = bitmap.getWidth() - x > 8 ? 8 : bitmap.getWidth() - x;
+          for (int bytePosition = byteWidth - 1; bytePosition >= 0; bytePosition--, x++) {
+            dst.setSample(x, y, 0, (pixels >> bytePosition) & 0x1);
           }
         }
       }
-      // Debug output
-      // System.out.println("Raster created without scaling");
-
     }
     return dst;
   }
@@ -226,30 +208,28 @@ public class Bitmaps {
    */
   public static Bitmap extract(Rectangle roi, Bitmap src) {
 
-    Bitmap dst = new Bitmap(roi.width, roi.height);
+    final Bitmap dst = new Bitmap(roi.width, roi.height);
 
-    int sourceUpShift = roi.x & 0x07;
-    int sourceDownShift = 8 - sourceUpShift;
+    final int sourceUpShift = roi.x & 0x07;
+    final int sourceDownShift = 8 - sourceUpShift;
     int firstTargetByteOfLine = 0;
 
-    int padding = (8 - dst.getWidth() & 0x07);
+    final int padding = (8 - dst.getWidth() & 0x07);
     int firstSourceByteOfLine = src.getByteIndex(roi.x, roi.y);
     int lastSourceByteOfLine = src.getByteIndex(roi.x + roi.width - 1, roi.y);
-    boolean usePadding = dst.getRowStride() == lastSourceByteOfLine + 1 - firstSourceByteOfLine;
-    byte value;
+    final boolean usePadding = dst.getRowStride() == lastSourceByteOfLine + 1 - firstSourceByteOfLine;
 
     for (int y = roi.y; y < roi.getMaxY(); y++) {
-
       int sourceOffset = firstSourceByteOfLine;
       int targetOffset = firstTargetByteOfLine;
 
       if (firstSourceByteOfLine == lastSourceByteOfLine) {
-        value = (byte) (src.getByte(sourceOffset) << sourceUpShift);
+        byte value = (byte) (src.getByte(sourceOffset) << sourceUpShift);
         value = unpad(padding, value);
         dst.setByte(targetOffset, value);
       } else if (sourceUpShift == 0) {
         for (int x = firstSourceByteOfLine; x <= lastSourceByteOfLine; x++) {
-          value = src.getByte(sourceOffset++);
+          byte value = src.getByte(sourceOffset++);
 
           if (x == lastSourceByteOfLine && usePadding) {
             value = unpad(padding, value);
@@ -271,15 +251,11 @@ public class Bitmaps {
 
   private static void copyLine(Bitmap src, Bitmap dst, int sourceUpShift, int sourceDownShift, int padding,
       int firstSourceByteOfLine, int lastSourceByteOfLine, boolean usePadding, int sourceOffset, int targetOffset) {
-
-    byte value;
-
     for (int x = firstSourceByteOfLine; x < lastSourceByteOfLine; x++) {
 
-      if (sourceOffset + 1 < src.getSize()) {
-        boolean isLastByte = x + 1 == lastSourceByteOfLine;
-
-        value = (byte) (src.getByte(sourceOffset++) << sourceUpShift | (src.getByte(sourceOffset) & 0xff) >>> sourceDownShift);
+      if (sourceOffset + 1 < src.getByteArray().length) {
+        final boolean isLastByte = x + 1 == lastSourceByteOfLine;
+        byte value = (byte) (src.getByte(sourceOffset++) << sourceUpShift | (src.getByte(sourceOffset) & 0xff) >>> sourceDownShift);
 
         if (isLastByte && !usePadding) {
           value = unpad(padding, value);
@@ -293,7 +269,7 @@ public class Bitmaps {
         }
 
       } else {
-        value = (byte) (src.getByte(sourceOffset++) << sourceUpShift & 0xff);
+        final byte value = (byte) (src.getByte(sourceOffset++) << sourceUpShift & 0xff);
         dst.setByte(targetOffset++, value);
       }
     }
@@ -338,18 +314,11 @@ public class Bitmaps {
     return dst;
   }
 
-  public static Bitmap subsampleX(Bitmap src, ImageReadParam param) {
+  public static Bitmap subsampleX(Bitmap src, final int xSubsampling, final int xSubsamplingOffset) {
     if (src == null)
       throw new IllegalArgumentException("src must not be null");
 
-    if (param == null)
-      throw new IllegalArgumentException("param must not be null");
-
-    final int xSubsampling = param.getSourceXSubsampling();
-    final int xSubsamplingOffset = param.getSubsamplingXOffset();
-
     final int dstHeight = (src.getWidth() - xSubsamplingOffset) / xSubsampling;
-
     final Bitmap dst = new Bitmap(src.getWidth(), dstHeight);
 
     for (int yDst = 0; yDst < dst.getHeight(); yDst++) {
@@ -363,18 +332,11 @@ public class Bitmaps {
     return dst;
   }
 
-  public static Bitmap subsampleY(Bitmap src, ImageReadParam param) {
+  public static Bitmap subsampleY(Bitmap src, final int ySubsampling, final int ySubsamplingOffset) {
     if (src == null)
       throw new IllegalArgumentException("src must not be null");
 
-    if (param == null)
-      throw new IllegalArgumentException("param must not be null");
-
-    final int ySubsampling = param.getSourceYSubsampling();
-    final int ySubsamplingOffset = param.getSubsamplingYOffset();
-
     final int dstWidth = (src.getWidth() - ySubsamplingOffset) / ySubsampling;
-
     final Bitmap dst = new Bitmap(dstWidth, src.getHeight());
 
     for (int yDst = 0, ySrc = ySubsamplingOffset; yDst < dst.getHeight(); yDst++, ySrc += ySubsampling) {

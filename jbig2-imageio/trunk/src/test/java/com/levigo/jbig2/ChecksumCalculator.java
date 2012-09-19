@@ -17,6 +17,7 @@
 
 package com.levigo.jbig2;
 
+import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -28,6 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.levigo.jbig2.err.JBIG2Exception;
+import com.levigo.jbig2.image.Bitmaps;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 
 @Ignore
@@ -44,7 +46,7 @@ public class ChecksumCalculator {
     ImageInputStream iis = disf.getInputStream(is);
     JBIG2Document doc = new JBIG2Document(iis);
     Bitmap b = doc.getPage(pageNumber).getBitmap();
-
+    
     MessageDigest md = MessageDigest.getInstance("MD5");
 
     byte[] digest = md.digest(b.getByteArray());

@@ -18,7 +18,7 @@
 package com.levigo.jbig2.image;
 
 
-public abstract class Filter {
+abstract class Filter {
 
   /**
    * Find a filter name by its type.
