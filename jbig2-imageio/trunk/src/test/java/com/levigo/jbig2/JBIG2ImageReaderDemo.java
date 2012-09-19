@@ -15,12 +15,21 @@
 
 package com.levigo.jbig2;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 
 import javax.imageio.stream.ImageInputStream;
 
+import com.levigo.jbig2.err.JBIG2Exception;
+import com.levigo.jbig2.image.Bitmaps;
+import com.levigo.jbig2.image.FilterType;
 import com.levigo.jbig2.io.DefaultInputStreamFactory;
 
 public class JBIG2ImageReaderDemo {
@@ -33,8 +42,8 @@ public class JBIG2ImageReaderDemo {
     this.imageIndex = imageIndex;
   }
 
-  public void show() throws IOException {
-    InputStream inputStream = getClass().getResourceAsStream(filepath);
+  public void show() throws IOException, JBIG2Exception {
+    InputStream inputStream = new FileInputStream(new File(filepath));
     DefaultInputStreamFactory disf = new DefaultInputStreamFactory();
     ImageInputStream imageInputStream = disf.getInputStream(inputStream);
 
@@ -42,21 +51,25 @@ public class JBIG2ImageReaderDemo {
 
     imageReader.setInput(imageInputStream);
     JBIG2ReadParam param = imageReader.getDefaultReadParam();
-    // param.setSourceRegion(new Rectangle(200, 200, 1500, 1500));
-    // param.setSourceRenderSize(new Dimension(864, 1170));
-    param.setSourceSubsampling(3, 3, 0, 0);
+    param.setSourceRegion(new Rectangle(500, 500, 2000, 2000));
+    param.setSourceRenderSize(new Dimension(678, 951));
+    param.setSourceSubsampling(3, 3, 1, 1);
 
     long timeStamp = System.currentTimeMillis();
-    BufferedImage bufferedImage = imageReader.read(imageIndex, param);
+
+    final JBIG2Document doc = new JBIG2Document(imageInputStream);
+    final Bitmap bitmap = doc.getPage(imageIndex).getBitmap();
+    final BufferedImage bufferedImage = Bitmaps.asBufferedImage(bitmap, param, FilterType.Lanczos);
     long duration = System.currentTimeMillis() - timeStamp;
     System.out.println(filepath + " decoding took " + duration + " ms");
 
     new TestImage(bufferedImage);
   }
 
-  public static void main(String[] args) throws IOException {
-    JBIG2ImageReaderDemo demo = new JBIG2ImageReaderDemo("/images/042_1.jb2", 0);
-    demo.show();
+  public static void main(String[] args) throws InterruptedException, InvocationTargetException, IOException,
+      JBIG2Exception {
+    URL imageUrl = JBIG2ImageReaderDemo.class.getResource("/images/042_1.jb2");
+    new JBIG2ImageReaderDemo(imageUrl.getPath(), 1).show();
   }
 
 }

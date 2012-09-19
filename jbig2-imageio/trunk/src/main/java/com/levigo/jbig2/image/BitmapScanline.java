@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.image;
@@ -20,9 +18,8 @@ package com.levigo.jbig2.image;
 import java.awt.image.WritableRaster;
 
 import com.levigo.jbig2.Bitmap;
-import com.levigo.jbig2.image.Scanline.ByteBiLevelPackedScanline;
 
-public final class BitmapScanline extends Scanline {
+final class BitmapScanline extends Scanline {
 
   private Bitmap bitmap;
   private WritableRaster raster;
@@ -42,7 +39,7 @@ public final class BitmapScanline extends Scanline {
   }
 
   @Override
-  protected void fetch(int x, int y) {
+  protected void fetch(int x, final int y) {
     lineBuffer = new int[length]; // really required?
     int srcByteIdx = bitmap.getByteIndex(x, y);
     while (x < length) {
@@ -56,72 +53,72 @@ public final class BitmapScanline extends Scanline {
   }
 
   @Override
-  protected void filter(int[] preShift, int[] postShift, Weighttab[] tabs, Scanline dst) {
+  protected void filter(final int[] preShift, final int[] postShift, final Weighttab[] tabs, final Scanline dst) {
     final BitmapScanline dstBitmapScanline = (BitmapScanline) dst;
     final int dstLength = dst.length;
 
-    // start sum at 1<<shift-1 for rounding
+    // start sum at 1 << shift - 1 for rounding
     final int start = 1 << postShift[0] - 1;
-    final int abuf[] = lineBuffer;
-    final int bbuf[] = dstBitmapScanline.lineBuffer;
+    final int srcBuffer[] = lineBuffer;
+    final int dstBuffer[] = dstBitmapScanline.lineBuffer;
 
-    // the next two blocks are duplicated except for the missing shift operation if preShift==0.
+    // the next two blocks are duplicated except for the missing shift operation if preShift == 0.
     final int preShift0 = preShift[0];
     final int postShift0 = postShift[0];
     if (preShift0 != 0) {
-      for (int bp = 0, b = 0; b < dstLength; b++) {
-        final Weighttab wtab = tabs[b];
-        final int an = wtab.weights.length;
+      for (int dstIndex = 0, tab = 0; tab < dstLength; tab++) {
+        final Weighttab weightTab = tabs[tab];
+        final int weights = weightTab.weights.length;
 
         int sum = start;
-        for (int wp = 0, ap = wtab.i0; wp < an && ap < abuf.length; wp++) {
-          sum += wtab.weights[wp] * (abuf[ap++] >> preShift0);
+        for (int weightIndex = 0, srcIndex = weightTab.i0; weightIndex < weights && srcIndex < srcBuffer.length; weightIndex++) {
+          sum += weightTab.weights[weightIndex] * (srcBuffer[srcIndex++] >> preShift0);
         }
 
         final int t = sum >> postShift0;
-        bbuf[bp++] = t < 0 ? 0 : t > 255 ? 255 : t;
+        dstBuffer[dstIndex++] = t < 0 ? 0 : t > 255 ? 255 : t;
       }
     } else {
-      for (int bp = 0, b = 0; b < dstLength; b++) {
-        final Weighttab wtab = tabs[b];
-        final int an = wtab.weights.length;
+      for (int dstIndex = 0, tab = 0; tab < dstLength; tab++) {
+        final Weighttab weightTab = tabs[tab];
+        final int weights = weightTab.weights.length;
 
         int sum = start;
-        for (int wp = 0, ap = wtab.i0; wp < an && ap < abuf.length; wp++) {
-          sum += wtab.weights[wp] * abuf[ap++];
+        for (int weightIndex = 0, srcIndex = weightTab.i0; weightIndex < weights && srcIndex < srcBuffer.length; weightIndex++) {
+          sum += weightTab.weights[weightIndex] * srcBuffer[srcIndex++];
         }
 
-        bbuf[bp++] = sum >> postShift0;
+        dstBuffer[dstIndex++] = sum >> postShift0;
       }
     }
   }
 
   @Override
-  protected void accumulate(int weight, Scanline dst) {
+  protected void accumulate(final int weight, final Scanline dst) {
     final BitmapScanline dstBitmapScanline = (BitmapScanline) dst;
 
-    final int abuf[] = lineBuffer;
-    final int bbuf[] = dstBitmapScanline.lineBuffer;
+    final int srcBuffer[] = lineBuffer;
+    final int dstBuffer[] = dstBitmapScanline.lineBuffer;
 
-    for (int b = 0; b < bbuf.length; b++)
-      bbuf[b] += weight * abuf[b];
+    for (int b = 0; b < dstBuffer.length; b++)
+      dstBuffer[b] += weight * srcBuffer[b];
   }
 
   @Override
-  protected void shift(int[] shift) {
+  protected void shift(final int[] shift) {
     final int shift0 = shift[0];
     final int half = 1 << shift0 - 1;
 
-    final int abuf[] = lineBuffer;
+    final int srcBuffer[] = lineBuffer;
 
-    for (int b = 0; b < abuf.length; b++) {
-      final int t = abuf[b] + half >> shift0;
-      abuf[b] = t < 0 ? 0 : t > 255 ? 255 : t;
+    for (int b = 0; b < srcBuffer.length; b++) {
+      final int pixel = srcBuffer[b] + half >> shift0;
+      srcBuffer[b] = pixel < 0 ? 0 : pixel > 255 ? 255 : pixel;
     }
   }
 
   @Override
-  protected void store(int x, int y) {
+  protected void store(final int x, final int y) {
     raster.setSamples(x, y, length, 1, 0, lineBuffer);
   }
 

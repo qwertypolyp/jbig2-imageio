@@ -22,7 +22,7 @@ import static java.lang.Math.min;
 
 import com.levigo.jbig2.util.Utils;
 
-public final class Weighttab {
+final class Weighttab {
   final int weights[]; /* weight[i] goes with pixel at i0+i */
   final int i0, i1; /* range of samples is [i0..i1-1] */
 
@@ -95,7 +95,7 @@ public final class Weighttab {
       if (i < i0)
         i = i0;
       final int t = weightOne - sum;
-      if (Resize.debug)
+      if (Resizer.debug)
         System.out.printf("[%d]+=%d ", i, t);
       weights[i - i0] += t; /* fudge center sample */
     }
@@ -103,7 +103,7 @@ public final class Weighttab {
     this.i0 = i0 - a0;
     this.i1 = i1 - a0;
 
-    if (Resize.debug) {
+    if (Resizer.debug) {
       System.out.printf("\t");
       for (int idx = 0, i = i0; i < i1; i++, idx++)
         System.out.printf("%5d ", weights[idx]);
