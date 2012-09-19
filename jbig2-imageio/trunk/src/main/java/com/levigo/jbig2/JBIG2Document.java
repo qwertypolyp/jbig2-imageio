@@ -127,7 +127,7 @@ class JBIG2Document {
    * @param segmentNr - The number of the wanted segment.
    * @return The requested {@link SegmentHeader}.
    */
-  public SegmentHeader getGlobalSegment(int segmentNr) {
+  SegmentHeader getGlobalSegment(int segmentNr) {
     if (null != globalSegments) {
       return globalSegments.getSegment(segmentNr);
     }
@@ -339,7 +339,7 @@ class JBIG2Document {
     return amountOfPagesUnknown;
   }
 
-  public boolean isGbUseExtTemplate() {
+  boolean isGbUseExtTemplate() {
     return gbUseExtTemplate;
   }
 
