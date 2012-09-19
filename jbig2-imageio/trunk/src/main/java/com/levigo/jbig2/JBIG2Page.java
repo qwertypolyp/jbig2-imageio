@@ -54,8 +54,6 @@ class JBIG2Page {
   /** The page bitmap that represents the page buffer */
   private Bitmap pageBitmap;
 
-  private ArrayList<SegmentData> pageStripes;
-
   private int finalHeight;
   private int finalWidth;
   private int resolutionX;
@@ -139,11 +137,9 @@ class JBIG2Page {
    * @throws JBIG2Exception
    */
   private void composePageBitmap() throws IOException, JBIG2Exception {
-    PageInformation pageInformation = null;
     if (pageNumber > 0) {
       // Page 79, 1) Decoding the page information segment
-      pageInformation = (PageInformation) getPageInformationSegment().getSegmentData();
-
+      PageInformation pageInformation = (PageInformation) getPageInformationSegment().getSegmentData();
       createPage(pageInformation);
       clearSegmentData();
     }
@@ -185,16 +181,11 @@ class JBIG2Page {
 
           final Bitmap regionBitmap = r.getRegionBitmap();
 
-          // Check if we have only one region that forms the complete page. If the dimension equals
-          // the page's dimension set the region's bitmap as the page's bitmap. Otherwise we have to
-          // blit the smaller region's bitmap into the page's bitmap (see Issue 6).
-          if (countRegions() == 1 && pageInformation.getDefaultPixelValue() == 0
-              && pageInformation.getWidth() == regionBitmap.getWidth()
-              && pageInformation.getHeight() == regionBitmap.getHeight()) {
+          if (fitsPage(pageInformation, regionBitmap)) {
             pageBitmap = regionBitmap;
           } else {
             final RegionSegmentInformation regionInfo = r.getRegionInfo();
-            final CombinationOperator op = updateCombinationOperator(pageInformation,
+            final CombinationOperator op = getCombinationOperator(pageInformation,
                 regionInfo.getCombinationOperator());
             Bitmaps.blit(regionBitmap, pageBitmap, regionInfo.getXLocation(), regionInfo.getYLocation(), op);
           }
@@ -204,27 +195,42 @@ class JBIG2Page {
     }
   }
 
+  /**
+   * Check if we have only one region that forms the complete page. If the dimension equals the
+   * page's dimension set the region's bitmap as the page's bitmap. Otherwise we have to blit the
+   * smaller region's bitmap into the page's bitmap (see Issue 6).
+   * 
+   * @param pageInformation
+   * @param regionBitmap
+   * @return
+   */
+  private boolean fitsPage(PageInformation pageInformation, final Bitmap regionBitmap) {
+    return countRegions() == 1 && pageInformation.getDefaultPixelValue() == 0
+        && pageInformation.getWidth() == regionBitmap.getWidth()
+        && pageInformation.getHeight() == regionBitmap.getHeight();
+  }
+
   private void createStripedPage(PageInformation pageInformation) throws IOException, IntegerMaxValueException,
       InvalidHeaderValueException {
-    pageStripes = new ArrayList<SegmentData>();
-
-    collectPageStripes();
+    final ArrayList<SegmentData> pageStripes = collectPageStripes();
 
     pageBitmap = new Bitmap(pageInformation.getWidth(), finalHeight);
+
     int startLine = 0;
     for (SegmentData sd : pageStripes) {
       if (sd instanceof EndOfStripe) {
-        EndOfStripe eos = (EndOfStripe) sd;
-        startLine = eos.getLineNumber() + 1;
+        startLine = ((EndOfStripe) sd).getLineNumber() + 1;
       } else {
-        Region r = (Region) sd;
-        CombinationOperator op = updateCombinationOperator(pageInformation, r.getRegionInfo().getCombinationOperator());
-        Bitmaps.blit(r.getRegionBitmap(), pageBitmap, r.getRegionInfo().getXLocation(), startLine, op);
+        final Region r = (Region) sd;
+        final RegionSegmentInformation regionInfo = r.getRegionInfo();
+        final CombinationOperator op = getCombinationOperator(pageInformation, regionInfo.getCombinationOperator());
+        Bitmaps.blit(r.getRegionBitmap(), pageBitmap, regionInfo.getXLocation(), startLine, op);
       }
     }
   }
 
-  private void collectPageStripes() {
+  private ArrayList<SegmentData> collectPageStripes() {
+    final ArrayList<SegmentData> pageStripes = new ArrayList<SegmentData>();
     for (SegmentHeader s : segments.values()) {
       // Page 79, 5)
       switch (s.getSegmentType()){
@@ -247,6 +253,8 @@ class JBIG2Page {
           break;
       }
     }
+
+    return pageStripes;
   }
 
   /**
@@ -282,7 +290,7 @@ class JBIG2Page {
    * @param newOperator - The combination operator, specified by actual segment
    * @return the new combination operator
    */
-  private CombinationOperator updateCombinationOperator(PageInformation pi, CombinationOperator newOperator) {
+  private CombinationOperator getCombinationOperator(PageInformation pi, CombinationOperator newOperator) {
     if (pi.isCombinationOperatorOverrideAllowed()) {
       return newOperator;
     } else {
@@ -316,7 +324,6 @@ class JBIG2Page {
    * Reset memory-critical parts of page.
    */
   protected void clearPageData() {
-    pageStripes = null;
     pageBitmap = null;
   }
 
