@@ -80,7 +80,7 @@ public class RegionSegmentInformation implements SegmentData {
       IntegerMaxValueException, IOException {
   }
 
-  public void setBitmapWidth(int bitmapWidth) {
+  public void setBitmapWidth(final int bitmapWidth) {
     this.bitmapWidth = bitmapWidth;
   }
 
@@ -88,7 +88,7 @@ public class RegionSegmentInformation implements SegmentData {
     return bitmapWidth;
   }
 
-  public void setBitmapHeight(int bitmapHeight) {
+  public void setBitmapHeight(final int bitmapHeight) {
     this.bitmapHeight = bitmapHeight;
   }
 

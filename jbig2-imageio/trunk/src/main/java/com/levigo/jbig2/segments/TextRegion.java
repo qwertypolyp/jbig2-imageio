@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -302,8 +300,7 @@ public class TextRegion implements Region {
     }
 
     createRegionBitmap();
-    long stripT = decodeStripT();
-    decodeSymbolInstances(stripT);
+    decodeSymbolInstances();
 
     /* 4) */
     return regionBitmap;
@@ -392,8 +389,9 @@ public class TextRegion implements Region {
     return stripT * -(sbStrips);
   }
 
-  private void decodeSymbolInstances(long stripT) throws IOException, InvalidHeaderValueException,
-      IntegerMaxValueException {
+  private void decodeSymbolInstances() throws IOException, InvalidHeaderValueException, IntegerMaxValueException {
+
+    long stripT = decodeStripT();
 
     /* Last two sentences of 6.4.5 2) */
     long firstS = 0;
@@ -402,14 +400,13 @@ public class TextRegion implements Region {
     /* 6.4.5 3 a) */
     while (instanceCounter < amountOfSymbolInstances) {
 
-      long dT = decodeDT();
+      final long dT = decodeDT();
       stripT += dT;
       long dfS = 0;
 
       /* 3 c) symbol instances in the strip */
       boolean first = true;
       currentS = 0;
-      long idS = 0;
 
       // do until OOB
       for (;;) {
@@ -423,7 +420,7 @@ public class TextRegion implements Region {
           /* 3 c) ii) - the remaining symbol instances in the strip */
         } else {
           /* 6.4.8 */
-          idS = decodeIdS();
+          final long idS = decodeIdS();
           /*
            * If result is OOB, then all the symbol instances in this strip have been decoded;
            * proceed to step 3 d) respectively 3 b)
@@ -444,7 +441,7 @@ public class TextRegion implements Region {
         /* 3 c) v) */
         final long r = decodeRI();
         /* 6.4.11 */
-        Bitmap ib = decodeIb(r, id);
+        final Bitmap ib = decodeIb(r, id);
 
         /* vi) */
         blit(ib, t);
@@ -455,7 +452,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeDT() throws IOException {
-
     /* 3) b) */
     /* 6.4.6 */
     long dT;
@@ -473,7 +469,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeDfS() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffFS == 3) {
         if (fsTable == null) {
@@ -489,7 +484,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeIdS() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffDS == 3) {
         // TODO test user-specified table
@@ -512,7 +506,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeCurrentT() throws IOException {
-
     if (sbStrips != 1) {
       if (isHuffmanEncoded) {
         return subInputStream.readBits(logSBStrips);
@@ -537,7 +530,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeRI() throws IOException {
-
     if (useRefinement) {
       if (isHuffmanEncoded) {
         return subInputStream.readBit();
@@ -550,7 +542,6 @@ public class TextRegion implements Region {
 
   private final Bitmap decodeIb(long r, long id) throws IOException, InvalidHeaderValueException,
       IntegerMaxValueException {
-
     Bitmap ib;
 
     if (r == 0) {
@@ -563,14 +554,14 @@ public class TextRegion implements Region {
       final long rdy = decodeRdy();
 
       /* 5) */
-      long symInRefSize = 0;
+      /* long symInRefSize = 0; */
       if (isHuffmanEncoded) {
-        symInRefSize = decodeSymInRefSize();
+        /* symInRefSize = */decodeSymInRefSize();
         subInputStream.skipBits();
       }
 
       /* 6) */
-      Bitmap ibo = symbols.get((int) id);
+      final Bitmap ibo = symbols.get((int) id);
       final int wo = ibo.getWidth();
       final int ho = ibo.getHeight();
 
@@ -595,7 +586,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeRdw() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffRDWidth == 3) {
         // TODO test user-specified table
@@ -626,7 +616,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeRdh() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffRDHeight == 3) {
         if (rdhTable == null) {
@@ -660,7 +649,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeRdx() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffRDX == 3) {
         if (rdxTable == null) {
@@ -697,7 +685,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeRdy() throws IOException, InvalidHeaderValueException {
-
     if (isHuffmanEncoded) {
       if (sbHuffRDY == 3) {
         if (rdyTable == null) {
@@ -738,7 +725,6 @@ public class TextRegion implements Region {
   }
 
   private final long decodeSymInRefSize() throws IOException, InvalidHeaderValueException {
-
     if (sbHuffRSize == 0) {
       return StandardTables.getTable(1).decode(subInputStream);
     } else {
@@ -781,7 +767,6 @@ public class TextRegion implements Region {
   }
 
   private final void blit(Bitmap ib, long t) {
-
     if (isTransposed == 0 && (referenceCorner == 2 || referenceCorner == 3)) {
       currentS += ib.getWidth() - 1;
     } else if (isTransposed == 1 && (referenceCorner == 0 || referenceCorner == 2)) {
@@ -793,7 +778,7 @@ public class TextRegion implements Region {
 
     /* viii) */
     if (isTransposed == 1) {
-      long swap = t;
+      final long swap = t;
       t = s;
       s = swap;
     }
@@ -815,19 +800,20 @@ public class TextRegion implements Region {
     Bitmaps.blit(ib, regionBitmap, (int) s, (int) t, combinationOperator);
 
     /* x) */
-    if (isTransposed == 0 && (referenceCorner == 0 || referenceCorner == 1))
+    if (isTransposed == 0 && (referenceCorner == 0 || referenceCorner == 1)) {
       currentS += ib.getWidth() - 1;
+    }
 
-    if (isTransposed == 1 && (referenceCorner == 1 || referenceCorner == 3))
+    if (isTransposed == 1 && (referenceCorner == 1 || referenceCorner == 3)) {
       currentS += ib.getHeight() - 1;
+    }
 
   }
 
   private void initSymbols() throws IOException, IntegerMaxValueException, InvalidHeaderValueException {
-
-    for (SegmentHeader segment : segmentHeader.getRtSegments()) {
+    for (final SegmentHeader segment : segmentHeader.getRtSegments()) {
       if (segment.getSegmentType() == 0) {
-        SymbolDictionary sd = (SymbolDictionary) segment.getSegmentData();
+        final SymbolDictionary sd = (SymbolDictionary) segment.getSegmentData();
 
         sd.cxIAID = cxIAID;
         symbols.addAll(sd.getDictionary());
@@ -837,16 +823,14 @@ public class TextRegion implements Region {
   }
 
   private HuffmanTable getUserTable(int referToTable) throws InvalidHeaderValueException, IOException {
-
-    SegmentHeader s = segmentHeader.getRtSegments()[referToTable];
-    Table t = (Table) s.getSegmentData();
+    final SegmentHeader s = segmentHeader.getRtSegments()[referToTable];
+    final Table t = (Table) s.getSegmentData();
     return new EncodedTable(t);
   }
 
   private void symbolIDCodeLengths() throws IOException {
-
     /* 1) - 2) */
-    List<Code> runCodeTable = new ArrayList<Code>();
+    final List<Code> runCodeTable = new ArrayList<Code>();
 
     for (int i = 0; i < 35; i++) {
       final int prefLen = (int) (subInputStream.readBits(4) & 0xf);
@@ -864,9 +848,9 @@ public class TextRegion implements Region {
     long previousCodeLength = 0;
 
     int counter = 0;
-    List<Code> sbSymCodes = new ArrayList<Code>();
+    final List<Code> sbSymCodes = new ArrayList<Code>();
     while (counter < amountOfSymbols) {
-      long code = ht.decode(subInputStream);
+      final long code = ht.decode(subInputStream);
       if (code < 32) {
         if (code > 0) {
           sbSymCodes.add(new Code((int) code, 0, counter, false));
@@ -875,8 +859,8 @@ public class TextRegion implements Region {
         previousCodeLength = code;
         counter++;
       } else {
-        long runLength = 0;
 
+        long runLength = 0;
         if (code == 32) {
           runLength = 3 + subInputStream.readBits(2);
         } else if (code == 33) {

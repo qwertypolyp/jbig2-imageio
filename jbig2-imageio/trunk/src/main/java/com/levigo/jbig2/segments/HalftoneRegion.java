@@ -84,12 +84,12 @@ public class HalftoneRegion implements Region {
   public HalftoneRegion() {
   }
 
-  public HalftoneRegion(SubInputStream subInputStream) {
+  public HalftoneRegion(final SubInputStream subInputStream) {
     this.subInputStream = subInputStream;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
   }
 
-  public HalftoneRegion(SubInputStream subInputStream, SegmentHeader segmentHeader) {
+  public HalftoneRegion(final SubInputStream subInputStream, final SegmentHeader segmentHeader) {
     this.subInputStream = subInputStream;
     this.segmentHeader = segmentHeader;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
@@ -200,7 +200,7 @@ public class HalftoneRegion implements Region {
    * This method draws the pattern into the region bitmap ({@code htReg}), as described in 6.6.5.2,
    * page 42
    */
-  private void renderPattern(int[][] grayScaleValues) {
+  private void renderPattern(final int[][] grayScaleValues) {
     int x = 0, y = 0;
 
     // 1)
@@ -212,9 +212,8 @@ public class HalftoneRegion implements Region {
         y = computeY(m, n);
 
         // ii)
-        final Bitmap currentBitmap = patterns.get(grayScaleValues[m][n]);
-
-        Bitmaps.blit(currentBitmap, halftoneRegionBitmap, (x + hGridX), (y + hGridY), hCombinationOperator);
+        final Bitmap patternBitmap = patterns.get(grayScaleValues[m][n]);
+        Bitmaps.blit(patternBitmap, halftoneRegionBitmap, (x + hGridX), (y + hGridY), hCombinationOperator);
       }
     }
   }
@@ -225,11 +224,10 @@ public class HalftoneRegion implements Region {
    * 
    */
   private ArrayList<Bitmap> getPatterns() throws InvalidHeaderValueException, IOException {
-    PatternDictionary patternDictionary = null;
-    ArrayList<Bitmap> patterns = new ArrayList<Bitmap>();
+    final ArrayList<Bitmap> patterns = new ArrayList<Bitmap>();
 
     for (SegmentHeader s : segmentHeader.getRtSegments()) {
-      patternDictionary = (PatternDictionary) s.getSegmentData();
+      final PatternDictionary patternDictionary = (PatternDictionary) s.getSegmentData();
       patterns.addAll(patternDictionary.getDictionary());
     }
 
@@ -240,8 +238,7 @@ public class HalftoneRegion implements Region {
    * Gray-scale image decoding procedure is special for halftone region decoding and is described in
    * Annex C.5 on page 98.
    */
-  private int[][] grayScaleDecoding(int bitsPerValue) throws IOException {
-    Bitmap[] grayScalePlanes = new Bitmap[bitsPerValue];
+  private int[][] grayScaleDecoding(final int bitsPerValue) throws IOException {
 
     short[] gbAtX = null;
     short[] gbAtY = null;
@@ -263,6 +260,8 @@ public class HalftoneRegion implements Region {
       gbAtX[3] = -2;
       gbAtY[3] = -2;
     }
+
+    Bitmap[] grayScalePlanes = new Bitmap[bitsPerValue];
 
     // 1)
     GenericRegion genericRegion = new GenericRegion(subInputStream);
@@ -288,12 +287,10 @@ public class HalftoneRegion implements Region {
   }
 
   private Bitmap[] combineGrayScalePlanes(Bitmap[] grayScalePlanes, int j) {
-
     int byteIndex = 0;
     for (int y = 0; y < grayScalePlanes[j].getHeight(); y++) {
 
       for (int x = 0; x < grayScalePlanes[j].getWidth(); x += 8) {
-
         final byte newValue = grayScalePlanes[j + 1].getByte(byteIndex);
         final byte oldValue = grayScalePlanes[j].getByte(byteIndex);
 
@@ -303,7 +300,7 @@ public class HalftoneRegion implements Region {
     return grayScalePlanes;
   }
 
-  private int[][] computeGrayScaleValues(Bitmap[] grayScalePlanes, int bitsPerValue) {
+  private int[][] computeGrayScaleValues(final Bitmap[] grayScalePlanes, final int bitsPerValue) {
     // Gray-scale decoding procedure, page 98
     final int[][] grayScaleValues = new int[hGridHeight][hGridWidth];
 
@@ -326,11 +323,11 @@ public class HalftoneRegion implements Region {
     return grayScaleValues;
   }
 
-  private int computeX(int m, int n) {
+  private int computeX(final int m, final int n) {
     return shiftAndFill((hGridX + m * hRegionY + n * hRegionX));
   }
 
-  private int computeY(int m, int n) {
+  private int computeY(final int m, final int n) {
     return shiftAndFill((hGridY + m * hRegionX - n * hRegionY));
   }
 
@@ -340,7 +337,7 @@ public class HalftoneRegion implements Region {
 
     if (value < 0) {
       // fill the leftmost 8 bits with 1
-      int bitPosition = (int) (Math.log(Integer.highestOneBit(value)) / Math.log(2));
+      final int bitPosition = (int) (Math.log(Integer.highestOneBit(value)) / Math.log(2));
 
       for (int i = 1; i < 31 - bitPosition; i++) {
         // bit flip
@@ -351,7 +348,8 @@ public class HalftoneRegion implements Region {
     return value;
   }
 
-  public void init(SegmentHeader header, SubInputStream sis) throws InvalidHeaderValueException, IOException {
+  public void init(final SegmentHeader header, final SubInputStream sis) throws InvalidHeaderValueException,
+      IOException {
     this.segmentHeader = header;
     this.subInputStream = sis;
     this.regionInfo = new RegionSegmentInformation(subInputStream);

@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -77,7 +75,7 @@ public class GenericRegion implements Region {
   public GenericRegion() {
   }
 
-  public GenericRegion(SubInputStream subInputStream) {
+  public GenericRegion(final SubInputStream subInputStream) {
     this.subInputStream = subInputStream;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
   }
@@ -107,16 +105,13 @@ public class GenericRegion implements Region {
     }
 
     if (!isMMREncoded) {
-      int amountOfGbAt;
-
+      final int amountOfGbAt;
       if (gbTemplate == 0) {
-
         if (useExtTemplates) {
           amountOfGbAt = 12;
         } else {
           amountOfGbAt = 4;
         }
-
       } else {
         amountOfGbAt = 1;
       }
@@ -130,7 +125,7 @@ public class GenericRegion implements Region {
     this.checkInput();
   }
 
-  private void readGbAtPixels(int amountOfGbAt) throws IOException {
+  private void readGbAtPixels(final int amountOfGbAt) throws IOException {
     gbAtX = new short[amountOfGbAt];
     gbAtY = new short[amountOfGbAt];
 
@@ -255,8 +250,8 @@ public class GenericRegion implements Region {
     return arithDecoder.decode(cx);
   }
 
-  private void decodeLine(int lineNumber, int width, int rowStride, int paddedWidth) throws IOException {
-
+  private void decodeLine(final int lineNumber, final int width, final int rowStride, final int paddedWidth)
+      throws IOException {
     final int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
     final int idx = byteIndex - rowStride;
 
@@ -286,7 +281,7 @@ public class GenericRegion implements Region {
    * 
    * @param lineNumber - Coordinate of the row that should be set.
    */
-  private void copyLineAbove(int lineNumber) {
+  private void copyLineAbove(final int lineNumber) {
     int targetByteIndex = lineNumber * regionBitmap.getRowStride();
     int sourceByteIndex = targetByteIndex - regionBitmap.getRowStride();
 
@@ -296,8 +291,8 @@ public class GenericRegion implements Region {
     }
   }
 
-  private void decodeTemplate0a(int lineNumber, int width, int rowStride, int paddedWidth, int byteIndex, int idx)
-      throws IOException {
+  private void decodeTemplate0a(final int lineNumber, final int width, final int rowStride, final int paddedWidth,
+      int byteIndex, int idx) throws IOException {
     int context;
     int overriddenContext = 0;
 
@@ -350,8 +345,8 @@ public class GenericRegion implements Region {
     }
   }
 
-  private void decodeTemplate0b(int lineNumber, int width, int rowStride, int paddedWidth, int byteIndex, int idx)
-      throws IOException {
+  private void decodeTemplate0b(final int lineNumber, final int width, final int rowStride, final int paddedWidth,
+      int byteIndex, int idx) throws IOException {
     int context;
     int overriddenContext = 0;
 
@@ -404,8 +399,8 @@ public class GenericRegion implements Region {
     }
   }
 
-  private void decodeTemplate1(int lineNumber, int width, int rowStride, int paddedWidth, int byteIndex, int idx)
-      throws IOException {
+  private void decodeTemplate1(final int lineNumber, int width, final int rowStride, final int paddedWidth,
+      int byteIndex, int idx) throws IOException {
     int context;
     int overriddenContext;
 
@@ -458,8 +453,8 @@ public class GenericRegion implements Region {
     }
   }
 
-  private void decodeTemplate2(int lineNumber, int width, int rowStride, int paddedWidth, int byteIndex, int idx)
-      throws IOException {
+  private void decodeTemplate2(final int lineNumber, final int width, final int rowStride, final int paddedWidth,
+      int byteIndex, int idx) throws IOException {
     int context;
     int overriddenContext;
 
@@ -513,8 +508,8 @@ public class GenericRegion implements Region {
     }
   }
 
-  private void decodeTemplate3(int lineNumber, int width, int rowStride, int paddedWidth, int byteIndex, int idx)
-      throws IOException {
+  private void decodeTemplate3(final int lineNumber, final int width, final int rowStride, final int paddedWidth,
+      int byteIndex, int idx) throws IOException {
     int context;
     int overriddenContext;
 
@@ -639,13 +634,13 @@ public class GenericRegion implements Region {
 
   }
 
-  private void setOverrideFlag(int index) {
+  private void setOverrideFlag(final int index) {
     gbAtOverride[index] = true;
     override = true;
   }
 
-  private int overrideAtTemplate0a(int context, int x, int y, int result, int minorX, int toShift) throws IOException {
-
+  private int overrideAtTemplate0a(int context, final int x, final int y, final int result, final int minorX,
+      final int toShift) throws IOException {
     if (gbAtOverride[0]) {
       context &= 0xffef;
       if (gbAtY[0] == 0 && gbAtX[0] >= -minorX)
@@ -680,8 +675,8 @@ public class GenericRegion implements Region {
     return context;
   }
 
-  private int overrideAtTemplate0b(int context, int x, int y, int result, int minorX, int toShift) throws IOException {
-
+  private int overrideAtTemplate0b(int context, final int x, final int y, final int result, final int minorX,
+      final int toShift) throws IOException {
     if (gbAtOverride[0]) {
       context &= 0xfffd;
       if (gbAtY[0] == 0 && gbAtX[0] >= -minorX)
@@ -771,7 +766,8 @@ public class GenericRegion implements Region {
     return context;
   }
 
-  private int overrideAtTemplate1(int context, int x, int y, int result, int minorX) throws IOException {
+  private int overrideAtTemplate1(int context, final int x, final int y, final int result, final int minorX)
+      throws IOException {
     context &= 0x1ff7;
     if (gbAtY[0] == 0 && gbAtX[0] >= -minorX)
       return (context | (result >> (7 - (minorX + gbAtX[0])) & 0x1) << 3);
@@ -779,7 +775,8 @@ public class GenericRegion implements Region {
       return (context | getPixel(x + gbAtX[0], y + gbAtY[0]) << 3);
   }
 
-  private int overrideAtTemplate2(int context, int x, int y, int result, int minorX) throws IOException {
+  private int overrideAtTemplate2(int context, final int x, final int y, final int result, final int minorX)
+      throws IOException {
     context &= 0x3fb;
     if (gbAtY[0] == 0 && gbAtX[0] >= -minorX)
       return (context | (result >> (7 - (minorX + gbAtX[0])) & 0x1) << 2);
@@ -787,7 +784,8 @@ public class GenericRegion implements Region {
       return (context | getPixel(x + gbAtX[0], y + gbAtY[0]) << 2);
   }
 
-  private int overrideAtTemplate3(int context, int x, int y, int result, int minorX) throws IOException {
+  private int overrideAtTemplate3(int context, final int x, final int y, final int result, final int minorX)
+      throws IOException {
     context &= 0x3ef;
     if (gbAtY[0] == 0 && gbAtX[0] >= -minorX)
       return (context | (result >> (7 - (minorX + gbAtX[0])) & 0x1) << 4);
@@ -795,7 +793,7 @@ public class GenericRegion implements Region {
       return (context | getPixel(x + gbAtX[0], y + gbAtY[0]) << 4);
   }
 
-  private byte getPixel(int x, int y) throws IOException {
+  private byte getPixel(final int x, final int y) throws IOException {
     if (x < 0 || x >= regionBitmap.getWidth())
       return 0;
 
@@ -808,7 +806,8 @@ public class GenericRegion implements Region {
   /**
    * Used by {@link SymbolDictionary}.
    */
-  protected void setParameters(boolean isMMREncoded, long dataOffset, long dataLength, int gbh, int gbw) {
+  protected void setParameters(final boolean isMMREncoded, final long dataOffset, final long dataLength, final int gbh,
+      final int gbw) {
     this.isMMREncoded = isMMREncoded;
     this.dataOffset = dataOffset;
     this.dataLength = dataLength;
@@ -822,8 +821,9 @@ public class GenericRegion implements Region {
   /**
    * Used by {@link SymbolDictionary}.
    */
-  protected void setParameters(boolean isMMREncoded, byte sdTemplate, boolean isTPGDon, boolean useSkip, short[] sdATX,
-      short[] sdATY, int symWidth, int hcHeight, CX cx, ArithmeticDecoder arithmeticDecoder) {
+  protected void setParameters(final boolean isMMREncoded, final byte sdTemplate, final boolean isTPGDon,
+      final boolean useSkip, final short[] sdATX, final short[] sdATY, final int symWidth, final int hcHeight,
+      final CX cx, final ArithmeticDecoder arithmeticDecoder) {
     this.isMMREncoded = isMMREncoded;
     this.gbTemplate = sdTemplate;
     this.isTPGDon = isTPGDon;
@@ -843,8 +843,9 @@ public class GenericRegion implements Region {
   /**
    * Used by {@link PatternDictionary} and {@link HalftoneRegion}.
    */
-  protected void setParameters(boolean isMMREncoded, long dataOffset, long dataLength, int gbh, int gbw,
-      byte gbTemplate, boolean isTPGDon, boolean useSkip, short[] gbAtX, short[] gbAtY) {
+  protected void setParameters(final boolean isMMREncoded, final long dataOffset, final long dataLength, final int gbh,
+      final int gbw, final byte gbTemplate, final boolean isTPGDon, final boolean useSkip, final short[] gbAtX,
+      final short[] gbAtY) {
     this.dataOffset = dataOffset;
     this.dataLength = dataLength;
 
@@ -866,7 +867,8 @@ public class GenericRegion implements Region {
     this.regionBitmap = null;
   }
 
-  public void init(SegmentHeader header, SubInputStream sis) throws InvalidHeaderValueException, IOException {
+  public void init(final SegmentHeader header, final SubInputStream sis) throws InvalidHeaderValueException,
+      IOException {
     this.subInputStream = sis;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
     parseHeader();
