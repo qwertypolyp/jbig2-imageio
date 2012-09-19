@@ -165,7 +165,7 @@ public class PageInformation implements SegmentData {
     bitmapHeight = (int) subInputStream.readBits(32); // & 0xffffffff;
   }
 
-  public void init(SegmentHeader header, SubInputStream sis) throws InvalidHeaderValueException, IOException {
+  public void init(final SegmentHeader header, final SubInputStream sis) throws InvalidHeaderValueException, IOException {
     subInputStream = sis;
 
     parseHeader();

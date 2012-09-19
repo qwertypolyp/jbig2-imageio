@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -20,7 +18,6 @@ package com.levigo.jbig2.segments;
 import java.io.IOException;
 
 import com.levigo.jbig2.Bitmap;
-import com.levigo.jbig2.JBIG2ImageReader;
 import com.levigo.jbig2.Region;
 import com.levigo.jbig2.SegmentHeader;
 import com.levigo.jbig2.decoder.arithmetic.ArithmeticDecoder;
@@ -39,7 +36,7 @@ import com.levigo.jbig2.util.log.LoggerFactory;
  */
 public class GenericRefinementRegion implements Region {
   private static final Logger log = LoggerFactory.getLogger(GenericRefinementRegion.class);
-  
+
   private SubInputStream subInputStream;
 
   private SegmentHeader segmentHeader;
@@ -75,12 +72,12 @@ public class GenericRefinementRegion implements Region {
   public GenericRefinementRegion() {
   }
 
-  public GenericRefinementRegion(SubInputStream subInputStream) {
+  public GenericRefinementRegion(final SubInputStream subInputStream) {
     this.subInputStream = subInputStream;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
   }
 
-  public GenericRefinementRegion(SubInputStream subInputStream, SegmentHeader segmentHeader) {
+  public GenericRefinementRegion(final SubInputStream subInputStream, final SegmentHeader segmentHeader) {
     this.subInputStream = subInputStream;
     this.segmentHeader = segmentHeader;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
@@ -202,21 +199,21 @@ public class GenericRefinementRegion implements Region {
   }
 
   private Bitmap getGrReference() throws IntegerMaxValueException, InvalidHeaderValueException, IOException {
-    SegmentHeader[] segments = segmentHeader.getRtSegments();
-    Region region = (Region) segments[0].getSegmentData();
+    final SegmentHeader[] segments = segmentHeader.getRtSegments();
+    final Region region = (Region) segments[0].getSegmentData();
 
     return region.getRegionBitmap();
   }
 
-  private void decodeOptimized(int lineNumber, int width, int rowStride, int refRowStride, int paddedWidth,
-      int deltaRefStride, int lineOffset) throws IOException {
+  private void decodeOptimized(final int lineNumber, final int width, final int rowStride, final int refRowStride,
+      final int paddedWidth, final int deltaRefStride, final int lineOffset) throws IOException {
 
     // Offset of the reference bitmap with respect to the bitmap being decoded
     // For example: if referenceDY = -1, y is 1 HIGHER that currY
     final int currentLine = lineNumber - referenceDY;
-    int referenceByteIndex = referenceBitmap.getByteIndex(0, currentLine);
+    final int referenceByteIndex = referenceBitmap.getByteIndex(0, currentLine);
 
-    int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
+    final int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
 
     switch (template){
       case 0 :
@@ -230,8 +227,9 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTemplate0(int lineNumber, int width, int rowStride, int refRowStride, int paddedWidth,
-      int deltaRefStride, int lineOffset, int byteIndex, int currentLine, int refByteIndex) throws IOException {
+  private void decodeTemplate0(final int lineNumber, final int width, final int rowStride, final int refRowStride,
+      final int paddedWidth, final int deltaRefStride, final int lineOffset, int byteIndex, final int currentLine,
+      int refByteIndex) throws IOException {
     int context;
     int overriddenContext;
 
@@ -319,8 +317,9 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTemplate1(int lineNumber, int width, int rowStride, int refRowStride, int paddedWidth,
-      int deltaRefStride, int lineOffset, int byteIndex, int currentLine, int refByteIndex) throws IOException {
+  private void decodeTemplate1(final int lineNumber, final int width, final int rowStride, final int refRowStride,
+      final int paddedWidth, final int deltaRefStride, final int lineOffset, int byteIndex, final int currentLine,
+      int refByteIndex) throws IOException {
     int context;
 
     // Registers
@@ -430,15 +429,15 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTypicalPredictedLine(int lineNumber, int width, int rowStride, int refRowStride, int paddedWidth,
-      int deltaRefStride) throws IOException {
+  private void decodeTypicalPredictedLine(final int lineNumber, final int width, final int rowStride,
+      final int refRowStride, final int paddedWidth, final int deltaRefStride) throws IOException {
 
     // Offset of the reference bitmap with respect to the bitmap being decoded
     // For example: if grReferenceDY = -1, y is 1 HIGHER that currY
     final int currentLine = lineNumber - referenceDY;
-    int refByteIndex = referenceBitmap.getByteIndex(0, currentLine);
+    final int refByteIndex = referenceBitmap.getByteIndex(0, currentLine);
 
-    int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
+    final int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
 
     switch (template){
       case 0 :
@@ -452,8 +451,9 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTypicalPredictedLineTemplate0(int lineNumber, int width, int rowStride, int refRowStride,
-      int paddedWidth, int deltaRefStride, int byteIndex, int currentLine, int refByteIndex) throws IOException {
+  private void decodeTypicalPredictedLineTemplate0(final int lineNumber, final int width, final int rowStride,
+      final int refRowStride, final int paddedWidth, final int deltaRefStride, int byteIndex, final int currentLine,
+      int refByteIndex) throws IOException {
     int context;
     int overriddenContext;
 
@@ -558,8 +558,9 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTypicalPredictedLineTemplate1(int lineNumber, int width, int rowStride, int refRowStride,
-      int paddedWidth, int deltaRefStride, int byteIndex, int currentLine, int refByteIndex) throws IOException {
+  private void decodeTypicalPredictedLineTemplate1(final int lineNumber, final int width, final int rowStride,
+      final int refRowStride, final int paddedWidth, final int deltaRefStride, int byteIndex, final int currentLine,
+      int refByteIndex) throws IOException {
     int context;
     int grReferenceValue;
 
@@ -592,9 +593,11 @@ public class GenericRefinementRegion implements Region {
       nextReferenceLine = 0;
     }
 
-    context = ((previousLine >> 5) & 0x6) | ((nextReferenceLine >> 2) & 0x30) | (currentReferenceLine & 0xc0) | (previousReferenceLine & 0x200);
+    context = ((previousLine >> 5) & 0x6) | ((nextReferenceLine >> 2) & 0x30) | (currentReferenceLine & 0xc0)
+        | (previousReferenceLine & 0x200);
 
-    grReferenceValue = ((nextReferenceLine >> 2) & 0x70) | (currentReferenceLine & 0xc0) | (previousReferenceLine & 0x700);
+    grReferenceValue = ((nextReferenceLine >> 2) & 0x70) | (currentReferenceLine & 0xc0)
+        | (previousReferenceLine & 0x700);
 
     int nextByte;
     for (int x = 0; x < paddedWidth; x = nextByte) {
@@ -607,7 +610,8 @@ public class GenericRefinementRegion implements Region {
       final int yOffset = deltaRefStride + 1;
 
       if (lineNumber > 0) {
-        previousLine = (previousLine << 8) | (readNextByte ? regionBitmap.getByteAsInteger(byteIndex - rowStride + 1) : 0);
+        previousLine = (previousLine << 8)
+            | (readNextByte ? regionBitmap.getByteAsInteger(byteIndex - rowStride + 1) : 0);
       }
 
       if (currentLine > 0 && currentLine <= referenceBitmap.getHeight()) {
@@ -655,8 +659,8 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private int overrideAtTemplate0(int context, int x, int y, int result, int minorX) throws IOException {
-
+  private int overrideAtTemplate0(int context, final int x, final int y, final int result, final int minorX)
+      throws IOException {
     if (grAtOverride[0]) {
       context &= 0xfff7;
       if (grAtY[0] == 0 && grAtX[0] >= -minorX) {
@@ -677,7 +681,7 @@ public class GenericRefinementRegion implements Region {
     return context;
   }
 
-  private byte getPixel(Bitmap b, int x, int y) throws IOException {
+  private byte getPixel(final Bitmap b, final int x, final int y) throws IOException {
     if (x < 0 || x >= b.getWidth()) {
       return 0;
     }
@@ -688,16 +692,16 @@ public class GenericRefinementRegion implements Region {
     return b.getPixel(x, y);
   }
 
-  public void init(SegmentHeader header, SubInputStream sis) throws IOException {
+  public void init(final SegmentHeader header, final SubInputStream sis) throws IOException {
     this.segmentHeader = header;
     this.subInputStream = sis;
     this.regionInfo = new RegionSegmentInformation(subInputStream);
     parseHeader();
   }
 
-  protected void setParameters(CX cx, ArithmeticDecoder arithmeticDecoder, short grTemplate, int regionWidth,
-      int regionHeight, Bitmap grReference, int grReferenceDX, int grReferenceDY, boolean isTPGRon, short[] grAtX,
-      short[] grAtY) {
+  protected void setParameters(final CX cx, final ArithmeticDecoder arithmeticDecoder, final short grTemplate,
+      final int regionWidth, final int regionHeight, final Bitmap grReference, final int grReferenceDX,
+      final int grReferenceDY, final boolean isTPGRon, final short[] grAtX, final short[] grAtY) {
 
     if (null != cx) {
       this.cx = cx;
