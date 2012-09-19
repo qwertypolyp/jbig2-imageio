@@ -192,7 +192,7 @@ public class Bitmap {
     return new Rectangle(0, 0, width, height);
   }
 
-  public int getSize() {
+  public int getMemorySize() {
     return bitmap.length;
   }
 }
