@@ -71,7 +71,7 @@ public class JBIG2ImageReader extends ImageReader {
    */
   @Override
   public JBIG2ReadParam getDefaultReadParam() {
-    return getDefaultReadParam(0);
+    return new JBIG2ReadParam();
   }
 
   /**
@@ -90,7 +90,7 @@ public class JBIG2ImageReader extends ImageReader {
       height = getHeight(index);
     } catch (IOException e) {
       if (log.isInfoEnabled()) {
-        log.info("Dimensions could not be determined. Returning read params with size 1x1");
+        log.info("Dimensions could not be determined. Returning read params with size " + width + "x" + height);
       }
     }
 
