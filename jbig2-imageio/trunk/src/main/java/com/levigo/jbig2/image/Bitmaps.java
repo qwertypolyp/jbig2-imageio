@@ -32,11 +32,11 @@ import com.levigo.jbig2.util.CombinationOperator;
 
 public class Bitmaps {
 
-  public static WritableRaster asRaster(Bitmap bitmap) {
+  public static WritableRaster asRaster(final Bitmap bitmap) {
     return asRaster(bitmap, FilterType.Gaussian);
   }
 
-  public static WritableRaster asRaster(Bitmap bitmap, FilterType filterType) {
+  public static WritableRaster asRaster(final Bitmap bitmap, final FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
@@ -46,7 +46,7 @@ public class Bitmaps {
     return asRaster(bitmap, param, filterType);
   }
 
-  public static WritableRaster asRaster(Bitmap bitmap, ImageReadParam param, FilterType filterType) {
+  public static WritableRaster asRaster(Bitmap bitmap, final ImageReadParam param, final FilterType filterType) {
     if (bitmap == null)
       throw new IllegalArgumentException("bitmap must not be null");
 
@@ -116,12 +116,13 @@ public class Bitmaps {
       }
     }
 
-    return getRaster(bitmap, filterType, scaleX, scaleY);
+    return buildRaster(bitmap, filterType, scaleX, scaleY);
   }
 
-  private static WritableRaster getRaster(Bitmap bitmap, FilterType filterType, double scaleX, double scaleY) {
-    final Rectangle dstBounds = new Rectangle(0, 0, (int) Math.round(bitmap.getWidth() * scaleX),
-        (int) Math.round(bitmap.getHeight() * scaleY));
+  private static WritableRaster buildRaster(final Bitmap bitmap, final FilterType filterType, final double scaleX,
+      final double scaleY) {
+    final Rectangle dstBounds = new Rectangle(0, 0, (int) Math.ceil(bitmap.getWidth() * scaleX),
+        (int) Math.ceil(bitmap.getHeight() * scaleY));
 
     final WritableRaster dst = WritableRaster.createInterleavedRaster(DataBuffer.TYPE_BYTE, dstBounds.width,
         dstBounds.height, 1, new Point());
@@ -169,9 +170,17 @@ public class Bitmaps {
       throw new IllegalArgumentException("param must not be null");
 
     final WritableRaster raster = asRaster(bitmap, param, filterType);
+
     final Dimension sourceRenderSize = param.getSourceRenderSize();
-    final double scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
-    final double scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
+
+    final double scaleX;
+    final double scaleY;
+    if (sourceRenderSize != null) {
+      scaleX = sourceRenderSize.getWidth() / bitmap.getWidth();
+      scaleY = sourceRenderSize.getHeight() / bitmap.getHeight();
+    } else {
+      scaleX = scaleY = 1d;
+    }
 
     ColorModel cm = null;
     final boolean isScaled = scaleX != 1 || scaleY != 1;
