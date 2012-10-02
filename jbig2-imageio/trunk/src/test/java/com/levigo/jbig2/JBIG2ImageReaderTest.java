@@ -1,24 +1,20 @@
 /**
  * Copyright (C) 1995-2012 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.IOException;
@@ -44,17 +40,13 @@ public class JBIG2ImageReaderTest {
     ImageReadParam param = reader.getDefaultReadParam();
     Assert.assertNotNull(param);
 
-    Rectangle sourceRegion = param.getSourceRegion();
-    Assert.assertEquals(1, sourceRegion.width);
-    Assert.assertEquals(1, sourceRegion.height);
-
-    Dimension srs = param.getSourceRenderSize();
-    Assert.assertEquals(1, srs.width);
-    Assert.assertEquals(1, srs.height);
+    Assert.assertNull(param.getSourceRegion());
+    Assert.assertNull(param.getSourceRenderSize());
 
     Assert.assertEquals(1, param.getSourceXSubsampling());
     Assert.assertEquals(1, param.getSourceYSubsampling());
-
+    Assert.assertEquals(0, param.getSubsamplingXOffset());
+    Assert.assertEquals(0, param.getSubsamplingYOffset());
   }
 
   @Test
