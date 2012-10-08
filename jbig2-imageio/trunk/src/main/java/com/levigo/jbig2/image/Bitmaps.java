@@ -131,20 +131,22 @@ public class Bitmaps {
       // scaling required
       final Resizer resizer = new Resizer(scaleX, scaleY);
       final Filter filter = Filter.byType(filterType);
-      resizer.resize(bitmap, bitmap.getBounds(), dst, dstBounds, filter, filter);
+      resizer.resize(bitmap, bitmap.getBounds() /* sourceRegion */, dst, dstBounds, filter, filter);
     } else {
       // scaling not required, paste bitmap into raster pixel per pixel
       int byteIndex = 0;
       for (int y = 0; y < bitmap.getHeight(); y++) {
-        for (int x = 0; x < bitmap.getWidth();) {
-          final byte pixels = (byte) ~bitmap.getByte(byteIndex++);
-          final int byteWidth = bitmap.getWidth() - x > 8 ? 8 : bitmap.getWidth() - x;
-          for (int bytePosition = byteWidth - 1; bytePosition >= 0; bytePosition--, x++) {
+        for (int x = 0; x < bitmap.getWidth(); byteIndex++) {
+          final int pixels = (~bitmap.getByte(byteIndex)) & 0xFF;
+          final int relevantPixels = bitmap.getWidth() - x > 8 ? 8 : bitmap.getWidth() - x;
+          final int endIdx = 7 - relevantPixels;
+          for (int bytePosition = 7; bytePosition > endIdx; bytePosition--, x++) {
             dst.setSample(x, y, 0, (pixels >> bytePosition) & 0x1);
           }
         }
       }
     }
+
     return dst;
   }
 
@@ -205,7 +207,6 @@ public class Bitmaps {
           });
     }
 
-
     return new BufferedImage(cm, raster, false, null);
   }
 
@@ -215,44 +216,42 @@ public class Bitmaps {
    * @param roi - A {@link Rectangle} that specifies the requested image section.
    * @return A {@code Bitmap} that represents the requested image section.
    */
-  public static Bitmap extract(Rectangle roi, Bitmap src) {
-
+  public static Bitmap extract(final Rectangle roi, final Bitmap src) {
     final Bitmap dst = new Bitmap(roi.width, roi.height);
 
-    final int sourceUpShift = roi.x & 0x07;
-    final int sourceDownShift = 8 - sourceUpShift;
-    int firstTargetByteOfLine = 0;
+    final int upShift = roi.x & 0x07;
+    final int downShift = 8 - upShift;
+    int dstLineStartIdx = 0;
 
     final int padding = (8 - dst.getWidth() & 0x07);
-    int firstSourceByteOfLine = src.getByteIndex(roi.x, roi.y);
-    int lastSourceByteOfLine = src.getByteIndex(roi.x + roi.width - 1, roi.y);
-    final boolean usePadding = dst.getRowStride() == lastSourceByteOfLine + 1 - firstSourceByteOfLine;
+    int srcLineStartIdx = src.getByteIndex(roi.x, roi.y);
+    int srcLineEndIdx = src.getByteIndex(roi.x + roi.width - 1, roi.y);
+    final boolean usePadding = dst.getRowStride() == srcLineEndIdx + 1 - srcLineStartIdx;
 
     for (int y = roi.y; y < roi.getMaxY(); y++) {
-      int sourceOffset = firstSourceByteOfLine;
-      int targetOffset = firstTargetByteOfLine;
+      int srcIdx = srcLineStartIdx;
+      int dstIdx = dstLineStartIdx;
 
-      if (firstSourceByteOfLine == lastSourceByteOfLine) {
-        byte value = (byte) (src.getByte(sourceOffset) << sourceUpShift);
-        value = unpad(padding, value);
-        dst.setByte(targetOffset, value);
-      } else if (sourceUpShift == 0) {
-        for (int x = firstSourceByteOfLine; x <= lastSourceByteOfLine; x++) {
-          byte value = src.getByte(sourceOffset++);
+      if (srcLineStartIdx == srcLineEndIdx) {
+        final byte pixels = (byte) (src.getByte(srcIdx) << upShift);
+        dst.setByte(dstIdx, unpad(padding, pixels));
+      } else if (upShift == 0) {
+        for (int x = srcLineStartIdx; x <= srcLineEndIdx; x++) {
+          byte value = src.getByte(srcIdx++);
 
-          if (x == lastSourceByteOfLine && usePadding) {
+          if (x == srcLineEndIdx && usePadding) {
             value = unpad(padding, value);
           }
-          dst.setByte(targetOffset++, value);
+
+          dst.setByte(dstIdx++, value);
         }
       } else {
-        copyLine(src, dst, sourceUpShift, sourceDownShift, padding, firstSourceByteOfLine, lastSourceByteOfLine,
-            usePadding, sourceOffset, targetOffset);
+        copyLine(src, dst, upShift, downShift, padding, srcLineStartIdx, srcLineEndIdx, usePadding, srcIdx, dstIdx);
       }
 
-      firstSourceByteOfLine += src.getRowStride();
-      lastSourceByteOfLine += src.getRowStride();
-      firstTargetByteOfLine += dst.getRowStride();
+      srcLineStartIdx += src.getRowStride();
+      srcLineEndIdx += src.getRowStride();
+      dstLineStartIdx += dst.getRowStride();
     }
 
     return dst;
