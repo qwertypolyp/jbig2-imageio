@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2013 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.util.cache;
@@ -30,7 +28,9 @@ import com.levigo.jbig2.util.ServiceLookup;
 public class CacheFactory {
 
   private static CacheBridge cacheBridge;
-  
+
+  private static ClassLoader clsLoader;
+
   public static Cache getCache(ClassLoader clsLoader) {
     if (null == cacheBridge) {
       final ServiceLookup<CacheBridge> serviceLookup = new ServiceLookup<CacheBridge>();
@@ -46,6 +46,10 @@ public class CacheFactory {
   }
 
   public static Cache getCache() {
-    return getCache(Thread.currentThread().getContextClassLoader());
+    return getCache(clsLoader != null ? clsLoader : CacheBridge.class.getClassLoader());
+  }
+
+  public static void setClassLoader(ClassLoader clsLoader) {
+    CacheFactory.clsLoader = clsLoader;
   }
 }
