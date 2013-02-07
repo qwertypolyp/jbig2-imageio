@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="MathML Gadget">
+    <Require feature="dynamic-height"/>
+  </ModulePrefs>
+  <UserPref name="content" datatype="string" display_name="Content" required="true"/>
+  <UserPref name="foreground" datatype="string" display_name="Formula Color" required="false" default_value=""/>
+  <UserPref name="fontsize" datatype="string" display_name="Formula Font Size" required="false" default_value="1em"/>
+  <Content type="html">
+    <![CDATA[
+      <span id="content">
+        <iframe src="https://www.google.com/calendar/embed?title=JBIG2-imageio%20Dates&amp;mode=AGENDA&amp;height=400&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=js1ivaenfrkdprdp0m71jlneeo%40group.calendar.google.com&amp;color=%23182C57&amp;ctz=Europe%2FBerlin" style=" border-width:0 " width="600" height="400" frameborder="0" scrolling="no"></iframe>
+      </span>
+    ]]>
+  </Content>
+</Module>
