@@ -3,7 +3,7 @@
   <groupId>com.levigo.jbig2</groupId>
   <artifactId>levigo-jbig2-imageio</artifactId>
   <versioning>
-    <release>1.6.0-RC1</release>
+    <release>1.6.0</release>
     <versions>
       <version>1.1</version>
       <version>1.2</version>
@@ -14,7 +14,8 @@
       <version>1.5.1</version>
       <version>1.5.2</version>
       <version>1.6.0-RC1</version>
+      <version>1.6.0</version>
     </versions>
-    <lastUpdated>20130314110010</lastUpdated>
+    <lastUpdated>20130328113445</lastUpdated>
   </versioning>
 </metadata>
