@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2013 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.segments;
@@ -213,9 +211,9 @@ public class GenericRefinementRegion implements Region {
     // Offset of the reference bitmap with respect to the bitmap being decoded
     // For example: if referenceDY = -1, y is 1 HIGHER that currY
     final int currentLine = lineNumber - referenceDY;
-    final int referenceByteIndex = referenceBitmap.getByteIndex(0, currentLine);
+    final int referenceByteIndex = referenceBitmap.getByteIndex(Math.max(0, -referenceDX), currentLine);
 
-    final int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
+    final int byteIndex = regionBitmap.getByteIndex(Math.max(0, referenceDX), lineNumber);
 
     switch (template){
       case 0 :
@@ -232,90 +230,151 @@ public class GenericRefinementRegion implements Region {
   private void decodeTemplate0(final int lineNumber, final int width, final int rowStride, final int refRowStride,
       final int paddedWidth, final int deltaRefStride, final int lineOffset, int byteIndex, final int currentLine,
       int refByteIndex) throws IOException {
-    int context;
-    int overriddenContext;
+    short c1, c2, c3, c4, c5;
 
-    // Registers
-    int previousReferenceLine;
-    int currentReferenceLine;
-    int nextReferenceLine;
-    int linePrev;
+    int w1, w2, w3, w4;
+    w1 = w2 = w3 = w4 = 0;
 
-    if (lineNumber > 0) {
-      linePrev = regionBitmap.getByteAsInteger(byteIndex - rowStride);
-    } else {
-      linePrev = 0;
+    if (currentLine >= 1 && (currentLine - 1) < referenceBitmap.getHeight())
+      w1 = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride);
+    if (currentLine >= 0 && currentLine < referenceBitmap.getHeight())
+      w2 = referenceBitmap.getByteAsInteger(refByteIndex);
+    if (currentLine >= -1 && currentLine + 1 < referenceBitmap.getHeight())
+      w3 = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride);
+    refByteIndex++;
+
+    if (lineNumber >= 1) {
+      w4 = regionBitmap.getByteAsInteger(byteIndex - rowStride);
     }
+    byteIndex++;
 
-    if (currentLine > 0 && currentLine <= referenceBitmap.getHeight()) {
-      previousReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride + deltaRefStride) << 4;
-    } else {
-      previousReferenceLine = 0;
-    }
+    final int modRefDX = referenceDX & 0x07;
 
-    if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
-      currentReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex + deltaRefStride) << 1;
-    } else {
-      currentReferenceLine = 0;
-    }
+    final int shiftOffset = 6 + modRefDX;
+    final int modRefByteIdx = refByteIndex % refRowStride;
 
-    if (currentLine > -2 && currentLine < (referenceBitmap.getHeight() - 1)) {
-      nextReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride + deltaRefStride);
-    } else {
-      nextReferenceLine = 0;
-    }
-
-    context = ((linePrev >> 5) & 0x6) | ((nextReferenceLine >> 2) & 0x30) | (currentReferenceLine & 0x180)
-        | (previousReferenceLine & 0xc00);
-
-    int nextByte;
-    for (int x = 0; x < paddedWidth; x = nextByte) {
-      byte result = 0;
-      nextByte = x + 8;
-      final int minorWidth = width - x > 8 ? 8 : width - x;
-      final boolean readNextByte = nextByte < width;
-      final boolean readNextRefByte = nextByte < referenceBitmap.getWidth();
-
-      if (lineNumber > 0) {
-        linePrev = (linePrev << 8) | (readNextByte ? regionBitmap.getByteAsInteger(byteIndex - rowStride + 1) : 0);
-      }
-
-      if (currentLine > 0 && currentLine <= referenceBitmap.getHeight()) {
-        previousReferenceLine = (previousReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex - refRowStride + lineOffset) << 4 : 0);
-      }
-
-      if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
-        currentReferenceLine = (currentReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex + lineOffset) << 1 : 0);
-      }
-
-      if (currentLine > -2 && currentLine < (referenceBitmap.getHeight() - 1)) {
-        nextReferenceLine = (nextReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex + refRowStride + lineOffset) : 0);
-      }
-
-      for (int minorX = 0; minorX < minorWidth; minorX++) {
-
-        if (override) {
-          overriddenContext = overrideAtTemplate0(context, x + minorX, lineNumber, result, minorX);
-          cx.setIndex(overriddenContext);
-        } else {
-          cx.setIndex(context);
+    if (shiftOffset >= 0) {
+      c1 = (short) ((shiftOffset >= 8 ? 0 : w1 >>> shiftOffset) & 0x07);
+      c2 = (short) ((shiftOffset >= 8 ? 0 : w2 >>> shiftOffset) & 0x07);
+      c3 = (short) ((shiftOffset >= 8 ? 0 : w3 >>> shiftOffset) & 0x07);
+      if (shiftOffset == 6 && modRefByteIdx > 1) {
+        if (currentLine >= 1 && (currentLine - 1) < referenceBitmap.getHeight()) {
+          c1 |= referenceBitmap.getByteAsInteger(refByteIndex - refRowStride - 2) << 2 & 0x04;
         }
-
-        final int bit = arithDecoder.decode(cx);
-
-        final int toShift = 7 - minorX;
-        result |= bit << toShift;
-
-        context = ((context & 0xdb6) << 1) | bit | ((linePrev >> toShift + 5) & 0x002)
-            | ((nextReferenceLine >> toShift + 2) & 0x010) | ((currentReferenceLine >> toShift) & 0x080)
-            | ((previousReferenceLine >> toShift) & 0x400);
-
+        if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
+          c2 |= referenceBitmap.getByteAsInteger(refByteIndex - 2) << 2 & 0x04;
+        }
+        if (currentLine >= -1 && currentLine + 1 < referenceBitmap.getHeight()) {
+          c3 |= referenceBitmap.getByteAsInteger(refByteIndex + refRowStride - 2) << 2 & 0x04;
+        }
       }
-      regionBitmap.setByte(byteIndex++, result);
-      refByteIndex++;
+      if (shiftOffset == 0) {
+        w1 = w2 = w3 = 0;
+        if (modRefByteIdx < refRowStride - 1) {
+          if (currentLine >= 1 && (currentLine - 1) < referenceBitmap.getHeight())
+            w1 = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride);
+          if (currentLine >= 0 && currentLine < referenceBitmap.getHeight())
+            w2 = referenceBitmap.getByteAsInteger(refByteIndex);
+          if (currentLine >= -1 && currentLine + 1 < referenceBitmap.getHeight())
+            w3 = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride);
+        }
+        refByteIndex++;
+      }
+    } else {
+      c1 = (short) ((w1 << 1) & 0x07);
+      c2 = (short) ((w2 << 1) & 0x07);
+      c3 = (short) ((w3 << 1) & 0x07);
+
+      w1 = w2 = w3 = 0;
+
+      if (modRefByteIdx < refRowStride - 1) {
+        if (currentLine >= 1 && (currentLine - 1) < referenceBitmap.getHeight())
+          w1 = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride);
+        if (currentLine >= 0 && currentLine < referenceBitmap.getHeight())
+          w2 = referenceBitmap.getByteAsInteger(refByteIndex);
+        if (currentLine >= -1 && currentLine + 1 < referenceBitmap.getHeight())
+          w3 = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride);
+        refByteIndex++;
+      }
+
+      c1 |= (short) ((w1 >>> 7) & 0x07);
+      c2 |= (short) ((w2 >>> 7) & 0x07);
+      c3 |= (short) ((w3 >>> 7) & 0x07);
+    }
+
+    c4 = (short) (w4 >>> 6);
+    c5 = 0;
+
+    final int bitsToTrim = (2 - modRefDX) & 0x7;
+    w1 <<= bitsToTrim;
+    w2 <<= bitsToTrim;
+    w3 <<= bitsToTrim;
+
+    w4 <<= 2;
+
+    for (int x = 0; x < width; x++) {
+      final short tval = (short) ((c1 << 10) | (c2 << 7) | (c3 << 4) | (c4 << 1) | c5);
+
+      final int modX = x & 0x7;
+
+      if (override) {
+        cx.setIndex(overrideAtTemplate0(tval, x, lineNumber,
+            regionBitmap.getByte(regionBitmap.getByteIndex(x, lineNumber)), modX));
+      } else {
+        cx.setIndex(tval);
+      }
+
+      final int bit = arithDecoder.decode(cx);
+      regionBitmap.setPixel(x, lineNumber, (byte) bit);
+
+      c1 = (short) (((c1 << 1) | 0x01 & (w1 >>> 7)) & 0x07);
+      c2 = (short) (((c2 << 1) | 0x01 & (w2 >>> 7)) & 0x07);
+      c3 = (short) (((c3 << 1) | 0x01 & (w3 >>> 7)) & 0x07);
+      c4 = (short) (((c4 << 1) | 0x01 & (w4 >>> 7)) & 0x07);
+      c5 = (short) bit;
+
+      final int modDeltaX = (x - referenceDX) & 0x07;
+      final int referenceWordNo = ((x - referenceDX) >> 3) + 1;
+
+      if (modDeltaX == 5) {
+
+        if (referenceWordNo >= referenceBitmap.getRowStride()) {
+          w1 = w2 = w3 = 0;
+        } else {
+          if (currentLine >= 1 && (currentLine - 1 < referenceBitmap.getHeight())) {
+            w1 = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride);
+          } else {
+            w1 = 0;
+          }
+          if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
+            w2 = referenceBitmap.getByteAsInteger(refByteIndex);
+          } else {
+            w2 = 0;
+          }
+          if (currentLine >= -1 && (currentLine + 1) < referenceBitmap.getHeight()) {
+            w3 = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride);
+          } else {
+            w3 = 0;
+          }
+        }
+        refByteIndex++;
+      } else {
+        w1 <<= 1;
+        w2 <<= 1;
+        w3 <<= 1;
+      }
+
+      if (modX == 5 && lineNumber >= 1) {
+        if ((x >> 3) + 1 >= regionBitmap.getRowStride()) {
+          w4 = 0;
+        } else {
+          w4 = regionBitmap.getByteAsInteger(byteIndex - rowStride);
+        }
+        byteIndex++;
+      } else {
+        w4 <<= 1;
+      }
+
     }
   }
 
@@ -434,7 +493,8 @@ public class GenericRefinementRegion implements Region {
   private void decodeTypicalPredictedLine(final int lineNumber, final int width, final int rowStride,
       final int refRowStride, final int paddedWidth, final int deltaRefStride) throws IOException {
 
-    // Offset of the reference bitmap with respect to the bitmap being decoded
+    // Offset of the reference bitmap with respect to the bitmap being
+    // decoded
     // For example: if grReferenceDY = -1, y is 1 HIGHER that currY
     final int currentLine = lineNumber - referenceDY;
     final int refByteIndex = referenceBitmap.getByteIndex(0, currentLine);
