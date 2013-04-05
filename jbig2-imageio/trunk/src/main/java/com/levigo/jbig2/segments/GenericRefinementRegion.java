@@ -248,9 +248,8 @@ public class GenericRefinementRegion implements Region {
     }
     byteIndex++;
 
-    final int modRefDX = referenceDX & 0x07;
-
-    final int shiftOffset = 6 + modRefDX;
+    final int modReferenceDX = referenceDX % 8;
+    final int shiftOffset = 6 + modReferenceDX;
     final int modRefByteIdx = refByteIndex % refRowStride;
 
     if (shiftOffset >= 0) {
@@ -284,9 +283,7 @@ public class GenericRefinementRegion implements Region {
       c1 = (short) ((w1 << 1) & 0x07);
       c2 = (short) ((w2 << 1) & 0x07);
       c3 = (short) ((w3 << 1) & 0x07);
-
       w1 = w2 = w3 = 0;
-
       if (modRefByteIdx < refRowStride - 1) {
         if (currentLine >= 1 && (currentLine - 1) < referenceBitmap.getHeight())
           w1 = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride);
@@ -296,7 +293,6 @@ public class GenericRefinementRegion implements Region {
           w3 = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride);
         refByteIndex++;
       }
-
       c1 |= (short) ((w1 >>> 7) & 0x07);
       c2 |= (short) ((w2 >>> 7) & 0x07);
       c3 |= (short) ((w3 >>> 7) & 0x07);
@@ -305,25 +301,24 @@ public class GenericRefinementRegion implements Region {
     c4 = (short) (w4 >>> 6);
     c5 = 0;
 
-    final int bitsToTrim = (2 - modRefDX) & 0x7;
-    w1 <<= bitsToTrim;
-    w2 <<= bitsToTrim;
-    w3 <<= bitsToTrim;
+    final int modBitsToTrim = (2 - modReferenceDX) % 8;
+    w1 <<= modBitsToTrim;
+    w2 <<= modBitsToTrim;
+    w3 <<= modBitsToTrim;
 
     w4 <<= 2;
 
     for (int x = 0; x < width; x++) {
-      final short tval = (short) ((c1 << 10) | (c2 << 7) | (c3 << 4) | (c4 << 1) | c5);
+      final int minorX = x & 0x07;
 
-      final int modX = x & 0x7;
+      final short tval = (short) ((c1 << 10) | (c2 << 7) | (c3 << 4) | (c4 << 1) | c5);
 
       if (override) {
         cx.setIndex(overrideAtTemplate0(tval, x, lineNumber,
-            regionBitmap.getByte(regionBitmap.getByteIndex(x, lineNumber)), modX));
+            regionBitmap.getByte(regionBitmap.getByteIndex(x, lineNumber)), minorX));
       } else {
         cx.setIndex(tval);
       }
-
       final int bit = arithDecoder.decode(cx);
       regionBitmap.setPixel(x, lineNumber, (byte) bit);
 
@@ -333,12 +328,8 @@ public class GenericRefinementRegion implements Region {
       c4 = (short) (((c4 << 1) | 0x01 & (w4 >>> 7)) & 0x07);
       c5 = (short) bit;
 
-      final int modDeltaX = (x - referenceDX) & 0x07;
-      final int referenceWordNo = ((x - referenceDX) >> 3) + 1;
-
-      if (modDeltaX == 5) {
-
-        if (referenceWordNo >= referenceBitmap.getRowStride()) {
+      if ((x - referenceDX) % 8 == 5) {
+        if (((x - referenceDX) / 8) + 1 >= referenceBitmap.getRowStride()) {
           w1 = w2 = w3 = 0;
         } else {
           if (currentLine >= 1 && (currentLine - 1 < referenceBitmap.getHeight())) {
@@ -364,7 +355,7 @@ public class GenericRefinementRegion implements Region {
         w3 <<= 1;
       }
 
-      if (modX == 5 && lineNumber >= 1) {
+      if (minorX == 5 && lineNumber >= 1) {
         if ((x >> 3) + 1 >= regionBitmap.getRowStride()) {
           w4 = 0;
         } else {
