@@ -37,6 +37,45 @@ import com.levigo.jbig2.util.log.LoggerFactory;
 public class GenericRefinementRegion implements Region {
   private static final Logger log = LoggerFactory.getLogger(GenericRefinementRegion.class);
 
+  public static abstract class Template {
+    protected abstract short form(short c1, short c2, short c3, short c4, short c5);
+
+    protected abstract void setIndex(CX cx);
+  }
+
+  private static class Template0 extends Template {
+
+    @Override
+    protected short form(short c1, short c2, short c3, short c4, short c5) {
+      return (short) ((c1 << 10) | (c2 << 7) | (c3 << 4) | (c4 << 1) | c5);
+    }
+
+    @Override
+    protected void setIndex(CX cx) {
+      // Figure 14, page 22
+      cx.setIndex(0x100);
+    }
+
+  }
+
+  private static class Template1 extends Template {
+
+    @Override
+    protected short form(short c1, short c2, short c3, short c4, short c5) {
+      return (short) (((c1 & 0x02) << 8) | (c2 << 6) | ((c3 & 0x03) << 4) | (c4 << 1) | c5);
+    }
+
+    @Override
+    protected void setIndex(CX cx) {
+      // Figure 15, page 22
+      cx.setIndex(0x080);
+    }
+
+  }
+
+  private static final Template T0 = new Template0();
+  private static final Template T1 = new Template1();
+
   private SubInputStream subInputStream;
 
   private SegmentHeader segmentHeader;
@@ -46,8 +85,9 @@ public class GenericRefinementRegion implements Region {
 
   /** Generic refinement region segment flags, 7.4.7.2 */
   private boolean isTPGROn;
-  private short template;
+  private short templateID;
 
+  private Template template;
   /** Generic refinement region segment AT flags, 7.4.7.3 */
   private short grAtX[];
   private short grAtY[];
@@ -68,7 +108,6 @@ public class GenericRefinementRegion implements Region {
    */
   private boolean override;
   private boolean[] grAtOverride;
-
   public GenericRefinementRegion() {
   }
 
@@ -104,10 +143,16 @@ public class GenericRefinementRegion implements Region {
     }
 
     /* Bit 0 */
-    template = (short) subInputStream.readBit();
+    templateID = (short) subInputStream.readBit();
 
-    if (template == 0) {
-      readAtPixels();
+    switch (templateID){
+      case 0 :
+        template = T0;
+        readAtPixels();
+        break;
+      case 1 :
+        template = T1;
+        break;
     }
   }
 
@@ -153,7 +198,7 @@ public class GenericRefinementRegion implements Region {
       /* 6.3.5.6 - 2) */
       regionBitmap = new Bitmap(regionInfo.getBitmapWidth(), regionInfo.getBitmapHeight());
 
-      if (template == 0) {
+      if (templateID == 0) {
         // AT pixel may only occur in template 0
         updateOverride();
       }
@@ -185,16 +230,7 @@ public class GenericRefinementRegion implements Region {
   }
 
   private int decodeSLTP() throws IOException {
-    switch (template){
-      case 0 :
-        // Figure 14, page 22
-        cx.setIndex(0x100);
-        break;
-      case 1 :
-        // Figure 15, page 22
-        cx.setIndex(0x080);
-        break;
-    }
+    template.setIndex(cx);
     return arithDecoder.decode(cx);
   }
 
@@ -215,21 +251,22 @@ public class GenericRefinementRegion implements Region {
 
     final int byteIndex = regionBitmap.getByteIndex(Math.max(0, referenceDX), lineNumber);
 
-    switch (template){
+    switch (templateID){
       case 0 :
-        decodeTemplate0(lineNumber, width, rowStride, refRowStride, paddedWidth, deltaRefStride, lineOffset, byteIndex,
-            currentLine, referenceByteIndex);
+        decodeTemplate(lineNumber, width, rowStride, refRowStride, paddedWidth, deltaRefStride, lineOffset, byteIndex,
+            currentLine, referenceByteIndex, T0);
         break;
       case 1 :
-        decodeTemplate1(lineNumber, width, rowStride, refRowStride, paddedWidth, deltaRefStride, lineOffset, byteIndex,
-            currentLine, referenceByteIndex);
+        decodeTemplate(lineNumber, width, rowStride, refRowStride, paddedWidth, deltaRefStride, lineOffset, byteIndex,
+            currentLine, referenceByteIndex, T1);
         break;
     }
+
   }
 
-  private void decodeTemplate0(final int lineNumber, final int width, final int rowStride, final int refRowStride,
+  private void decodeTemplate(final int lineNumber, final int width, final int rowStride, final int refRowStride,
       final int paddedWidth, final int deltaRefStride, final int lineOffset, int byteIndex, final int currentLine,
-      int refByteIndex) throws IOException {
+      int refByteIndex, Template templateFormation) throws IOException {
     short c1, c2, c3, c4, c5;
 
     int w1, w2, w3, w4;
@@ -311,7 +348,7 @@ public class GenericRefinementRegion implements Region {
     for (int x = 0; x < width; x++) {
       final int minorX = x & 0x07;
 
-      final short tval = (short) ((c1 << 10) | (c2 << 7) | (c3 << 4) | (c4 << 1) | c5);
+      final short tval = templateFormation.form(c1, c2, c3, c4, c5);
 
       if (override) {
         cx.setIndex(overrideAtTemplate0(tval, x, lineNumber,
@@ -369,87 +406,6 @@ public class GenericRefinementRegion implements Region {
     }
   }
 
-  private void decodeTemplate1(final int lineNumber, final int width, final int rowStride, final int refRowStride,
-      final int paddedWidth, final int deltaRefStride, final int lineOffset, int byteIndex, final int currentLine,
-      int refByteIndex) throws IOException {
-    int context;
-
-    // Registers
-    int linePrev;
-    int previousReferenceLine;
-    int currentReferenceLine;
-    int nextReferenceLine;
-
-    if (lineNumber > 0) {
-      linePrev = regionBitmap.getByteAsInteger(byteIndex - rowStride);
-    } else {
-      linePrev = 0;
-    }
-
-    if (currentLine > 0 && currentLine <= referenceBitmap.getHeight()) {
-      previousReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex - refRowStride + deltaRefStride) << 2;
-    } else {
-      previousReferenceLine = 0;
-    }
-
-    if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
-      currentReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex + deltaRefStride);
-    } else {
-      currentReferenceLine = 0;
-    }
-
-    if (currentLine > -2 && currentLine < (referenceBitmap.getHeight() - 1)) {
-      nextReferenceLine = referenceBitmap.getByteAsInteger(refByteIndex + refRowStride + deltaRefStride);
-    } else {
-      nextReferenceLine = 0;
-    }
-
-    context = ((linePrev >> 5) & 0x6) | ((nextReferenceLine >> 2) & 0x30) | (currentReferenceLine & 0xc0)
-        | (previousReferenceLine & 0x200);
-
-    int nextByte;
-    for (int x = 0; x < paddedWidth; x = nextByte) {
-      byte result = 0;
-      nextByte = x + 8;
-      final int minorWidth = width - x > 8 ? 8 : width - x;
-      final boolean readNextByte = nextByte < width;
-      final boolean readNextRefByte = nextByte < referenceBitmap.getWidth();
-
-      if (lineNumber > 0) {
-        linePrev = (linePrev << 8) | (readNextByte ? regionBitmap.getByteAsInteger(byteIndex - rowStride + 1) : 0);
-      }
-
-      if (currentLine > 0 && currentLine <= referenceBitmap.getHeight()) {
-        previousReferenceLine = (previousReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex - refRowStride + lineOffset) << 2 : 0);
-      }
-
-      if (currentLine >= 0 && currentLine < referenceBitmap.getHeight()) {
-        currentReferenceLine = (currentReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex + lineOffset) : 0);
-      }
-
-      if (currentLine > -2 && currentLine < (referenceBitmap.getHeight() - 1)) {
-        nextReferenceLine = (nextReferenceLine << 8)
-            | (readNextRefByte ? referenceBitmap.getByteAsInteger(refByteIndex + refRowStride + lineOffset) : 0);
-      }
-
-      for (int minorX = 0; minorX < minorWidth; minorX++) {
-        cx.setIndex(context);
-
-        final int bit = arithDecoder.decode(cx);
-        final int toShift = 7 - minorX;
-        result |= bit << toShift;
-
-        context = ((context & 0x0d6) << 1) | bit | ((linePrev >> toShift + 5) & 0x002)
-            | ((nextReferenceLine >> toShift + 2) & 0x010) | ((currentReferenceLine >> toShift) & 0x040)
-            | ((previousReferenceLine >> toShift) & 0x200);
-      }
-      regionBitmap.setByte(byteIndex++, result);
-      refByteIndex++;
-    }
-  }
-
   private void updateOverride() {
     if (grAtX == null || grAtY == null) {
       log.info("AT pixels not set");
@@ -463,7 +419,7 @@ public class GenericRefinementRegion implements Region {
 
     grAtOverride = new boolean[grAtX.length];
 
-    switch (template){
+    switch (templateID){
       case 0 :
         if (grAtX[0] != -1 && grAtY[0] != -1) {
           grAtOverride[0] = true;
@@ -492,7 +448,7 @@ public class GenericRefinementRegion implements Region {
 
     final int byteIndex = regionBitmap.getByteIndex(0, lineNumber);
 
-    switch (template){
+    switch (templateID){
       case 0 :
         decodeTypicalPredictedLineTemplate0(lineNumber, width, rowStride, refRowStride, paddedWidth, deltaRefStride,
             byteIndex, currentLine, refByteIndex);
@@ -764,7 +720,7 @@ public class GenericRefinementRegion implements Region {
       this.arithDecoder = arithmeticDecoder;
     }
 
-    this.template = grTemplate;
+    this.templateID = grTemplate;
 
     this.regionInfo.setBitmapWidth(regionWidth);
     this.regionInfo.setBitmapHeight(regionHeight);
