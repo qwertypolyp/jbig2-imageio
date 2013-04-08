@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2013 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2;
@@ -112,6 +110,26 @@ public class ChecksumTest {
             "/images/sampledata_page2.jb2", "104-68-555325117-4757-48527676-9775-8432"
         }, {
             "/images/sampledata_page3.jb2", "-7825-56-41-30-19-719536-3678580-61-2586"
+        }, {
+            "/images/20123110001.jb2", "60-96-101-2458-3335024-5468-5-11068-78-80"
+        }, {
+            "/images/20123110002.jb2", "-28-921048181-117-48-96126-110-9-2865611113"
+        }, {
+            "/images/20123110003.jb2", "-3942-239351-28-56-729169-5839122-439231"
+        }, {
+            "/images/20123110004.jb2", "-49-101-28-20-57-4-24-17-9352104-106-118-122-122"
+        }, {
+            "/images/20123110005.jb2", "-48221261779-94-838820-127-114110-2-88-80-106"
+        }, {
+            "/images/20123110006.jb2", "81-11870-63-30124-1614-45838-53-123-41639"
+        }, {
+            "/images/20123110007.jb2", "12183-49124728346-29-124-9-10775-63-44116103"
+        }, {
+            "/images/20123110008.jb2", "15-74-49-45958458-67-2545-96-119-122-60100-35"
+        }, {
+            "/images/20123110009.jb2", "36115-114-28-123-3-70-87-113-4197-8512396113-65"
+        }, {
+            "/images/20123110010.jb2", "-109-1069-61-1576-67-43122406037-75-1091115"
         }
     });
   }
