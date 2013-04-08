@@ -1,7 +1,13 @@
 #summary Release notes of jbig2-imageio project.
 
-===1.6.0 RC (upcomming)===
-*Planned release date: 2013-03-14
+===1.6.1 (upcomming)===
+*Planned release date: 2013-04-18
+
+Changes:
+  * Issue 11: Added support for `GRREFERENCEDX` in generic refinement region coding.
+
+===1.6.0===
+*Release date: 2013-03-28
 
 Changes:
   * Issue 10: Usability of `CacheFactory` and `LoggerFactory` improved. Both can be configured with a specific `ClassLoader` to work with.
