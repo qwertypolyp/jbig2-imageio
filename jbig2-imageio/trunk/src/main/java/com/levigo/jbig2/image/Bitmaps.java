@@ -1,18 +1,16 @@
 /**
  * Copyright (C) 1995-2013 levigo holding gmbh.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of the
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+ * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along with this program. If
+ * not, see <http://www.gnu.org/licenses/>.
  */
 
 package com.levigo.jbig2.image;
@@ -407,113 +405,114 @@ public class Bitmaps {
   public static void blit(Bitmap src, Bitmap dst, int x, int y, CombinationOperator combinationOperator) {
 
     int startLine = 0;
-    int sourceStartByteIndex = 0;
-    int sourceEndByteIndex = (src.getRowStride() - 1);
+    int srcStartIdx = 0;
+    int srcEndIdx = (src.getRowStride() - 1);
 
     // Ignore those parts of the source bitmap which would be placed outside the target bitmap.
     if (x < 0) {
-      sourceStartByteIndex = -x;
+      srcStartIdx = -x;
       x = 0;
     } else if (x + src.getWidth() > dst.getWidth()) {
-      sourceEndByteIndex -= (src.getWidth() + x - dst.getWidth());
+      srcEndIdx -= (src.getWidth() + x - dst.getWidth());
     }
 
     if (y < 0) {
       startLine = -y;
       y = 0;
-      sourceStartByteIndex += src.getRowStride();
-      sourceEndByteIndex += src.getRowStride();
+      srcStartIdx += src.getRowStride();
+      srcEndIdx += src.getRowStride();
     } else if (y + src.getHeight() > dst.getHeight()) {
       startLine = src.getHeight() + y - dst.getHeight();
     }
 
-    int shiftVal1 = x & 0x07;
-    int shiftVal2 = 8 - shiftVal1;
+    final int shiftVal1 = x & 0x07;
+    final int shiftVal2 = 8 - shiftVal1;
 
-    int padding = src.getWidth() & 0x07;
-    int toShift = shiftVal2 - padding;
+    final int padding = src.getWidth() & 0x07;
+    final int toShift = shiftVal2 - padding;
 
-    boolean useShift = (shiftVal2 & 0x07) != 0;
-    boolean specialCase = src.getWidth() <= ((sourceEndByteIndex - sourceStartByteIndex) << 3) + shiftVal2;
+    final boolean useShift = (shiftVal2 & 0x07) != 0;
+    final boolean specialCase = src.getWidth() <= ((srcEndIdx - srcStartIdx) << 3) + shiftVal2;
 
-    int targetStartByte = dst.getByteIndex(x, y);
+    final int dstStartIdx = dst.getByteIndex(x, y);
+
+    final int lastLine = Math.min(src.getHeight(), startLine + dst.getHeight());
 
     if (!useShift) {
-      blitUnshifted(src, dst, startLine, targetStartByte, sourceStartByteIndex, sourceEndByteIndex, combinationOperator);
+      blitUnshifted(src, dst, startLine, lastLine, dstStartIdx, srcStartIdx, srcEndIdx, combinationOperator);
     } else if (specialCase) {
-      blitSpecialShifted(src, dst, startLine, targetStartByte, sourceStartByteIndex, sourceEndByteIndex, toShift,
-          shiftVal1, shiftVal2, combinationOperator);
+      blitSpecialShifted(src, dst, startLine, lastLine, dstStartIdx, srcStartIdx, srcEndIdx, toShift, shiftVal1,
+          shiftVal2, combinationOperator);
     } else {
-      blitShifted(src, dst, startLine, targetStartByte, sourceStartByteIndex, sourceEndByteIndex, toShift, shiftVal1,
-          shiftVal2, combinationOperator, padding);
+      blitShifted(src, dst, startLine, lastLine, dstStartIdx, srcStartIdx, srcEndIdx, toShift, shiftVal1, shiftVal2,
+          combinationOperator, padding);
     }
   }
 
-  private static void blitUnshifted(Bitmap src, Bitmap dst, int startLine, int targetStartByte,
-      int sourceStartByteIndex, int sourceEndByteIndex, CombinationOperator op) {
+  private static void blitUnshifted(Bitmap src, Bitmap dst, int startLine, int lastLine, int dstStartIdx,
+      int srcStartIdx, int srcEndIdx, CombinationOperator op) {
 
-    for (int line = startLine; line < src.getHeight(); line++, targetStartByte += dst.getRowStride(), sourceStartByteIndex += src.getRowStride(), sourceEndByteIndex += src.getRowStride()) {
-      int targetByteIndex = targetStartByte;
+    for (int dstLine = startLine; dstLine < lastLine; dstLine++, dstStartIdx += dst.getRowStride(), srcStartIdx += src.getRowStride(), srcEndIdx += src.getRowStride()) {
+      int dstIdx = dstStartIdx;
 
       // Go through the bytes in a line of the Symbol
-      for (int sourceByteIndex = sourceStartByteIndex; sourceByteIndex <= sourceEndByteIndex; sourceByteIndex++) {
-        byte oldByte = dst.getByte(targetByteIndex);
-        byte newByte = src.getByte(sourceByteIndex);
-        dst.setByte(targetByteIndex++, Bitmaps.combineBytes(oldByte, newByte, op));
+      for (int srcIdx = srcStartIdx; srcIdx <= srcEndIdx; srcIdx++) {
+        byte oldByte = dst.getByte(dstIdx);
+        byte newByte = src.getByte(srcIdx);
+        dst.setByte(dstIdx++, Bitmaps.combineBytes(oldByte, newByte, op));
       }
     }
   }
 
-  private static void blitSpecialShifted(Bitmap bitmapToBlit, Bitmap dst, int startLine, int targetStartByte,
-      int sourceStartByteIndex, int sourceEndByteIndex, int toShift, int shiftVal1, int shiftVal2,
-      CombinationOperator op) {
+  private static void blitSpecialShifted(Bitmap src, Bitmap dst, int startLine, int lastLine, int dstStartIdx,
+      int srcStartIdx, int srcEndIdx, int toShift, int shiftVal1, int shiftVal2, CombinationOperator op) {
 
-    for (int line = startLine; line < bitmapToBlit.getHeight(); line++, targetStartByte += dst.getRowStride(), sourceStartByteIndex += bitmapToBlit.getRowStride(), sourceEndByteIndex += bitmapToBlit.getRowStride()) {
+    for (int dstLine = startLine; dstLine < lastLine; dstLine++, dstStartIdx += dst.getRowStride(), srcStartIdx += src.getRowStride(), srcEndIdx += src.getRowStride()) {
       short register = 0;
-      int targetByteIndex = targetStartByte;
+      int dstIdx = dstStartIdx;
 
       // Go through the bytes in a line of the Symbol
-      for (int sourceByteIndex = sourceStartByteIndex; sourceByteIndex <= sourceEndByteIndex; sourceByteIndex++) {
-        byte oldByte = dst.getByte(targetByteIndex);
-        register = (short) ((register | bitmapToBlit.getByte(sourceByteIndex) & 0xff) << shiftVal2);
+      for (int srcIdx = srcStartIdx; srcIdx <= srcEndIdx; srcIdx++) {
+        byte oldByte = dst.getByte(dstIdx);
+        register = (short) ((register | src.getByte(srcIdx) & 0xff) << shiftVal2);
         byte newByte = (byte) (register >> 8);
 
-        if (sourceByteIndex == sourceEndByteIndex) {
+        if (srcIdx == srcEndIdx) {
           newByte = unpad(toShift, newByte);
         }
 
-        dst.setByte(targetByteIndex++, Bitmaps.combineBytes(oldByte, newByte, op));
+        dst.setByte(dstIdx++, Bitmaps.combineBytes(oldByte, newByte, op));
         register <<= shiftVal1;
       }
     }
   }
 
-  private static void blitShifted(Bitmap src, Bitmap dst, int startLine, int targetStartByte, int sourceStartByteIndex,
-      int sourceEndByteIndex, int toShift, int shiftVal1, int shiftVal2, CombinationOperator op, int padding) {
+  private static void blitShifted(Bitmap src, Bitmap dst, int startLine, int lastLine, int dstStartIdx,
+      int srcStartIdx, int srcEndIdx, int toShift, int shiftVal1, int shiftVal2, CombinationOperator op, int padding) {
 
-    for (int line = startLine; line < src.getHeight(); line++, targetStartByte += dst.getRowStride(), sourceStartByteIndex += src.getRowStride(), sourceEndByteIndex += src.getRowStride()) {
+    for (int dstLine = startLine; dstLine < lastLine; dstLine++, dstStartIdx += dst.getRowStride(), srcStartIdx += src.getRowStride(), srcEndIdx += src.getRowStride()) {
       short register = 0;
-      int targetByteIndex = targetStartByte;
+      int dstIdx = dstStartIdx;
 
-      // Go through the bytes in a line of the Symbol
-      for (int sourceByteIndex = sourceStartByteIndex; sourceByteIndex <= sourceEndByteIndex; sourceByteIndex++) {
-        byte oldByte = dst.getByte(targetByteIndex);
-        register = (short) ((register | src.getByte(sourceByteIndex) & 0xff) << shiftVal2);
+      // Go through the bytes in a line of the symbol
+      for (int srcIdx = srcStartIdx; srcIdx <= srcEndIdx; srcIdx++) {
+        byte oldByte = dst.getByte(dstIdx);
+        register = (short) ((register | src.getByte(srcIdx) & 0xff) << shiftVal2);
 
         byte newByte = (byte) (register >> 8);
-        dst.setByte(targetByteIndex++, Bitmaps.combineBytes(oldByte, newByte, op));
+        dst.setByte(dstIdx++, Bitmaps.combineBytes(oldByte, newByte, op));
 
         register <<= shiftVal1;
 
-        if (sourceByteIndex == sourceEndByteIndex) {
+        if (srcIdx == srcEndIdx) {
           newByte = (byte) (register >> (8 - shiftVal2));
 
           if (padding != 0) {
             newByte = unpad(8 + toShift, newByte);
           }
 
-          oldByte = dst.getByte(targetByteIndex);
-          dst.setByte(targetByteIndex, Bitmaps.combineBytes(oldByte, newByte, op));
+          oldByte = dst.getByte(dstIdx);
+          dst.setByte(dstIdx, Bitmaps.combineBytes(oldByte, newByte, op));
         }
       }
     }
