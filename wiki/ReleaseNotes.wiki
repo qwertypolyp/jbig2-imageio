@@ -1,7 +1,7 @@
 #summary Release notes of jbig2-imageio project.
 
-===1.6.1 (upcomming)===
-*Planned release date: 2013-04-18
+===1.6.1 ===
+*Release date: 2013-04-18
 
 Changes:
   * Issue 11: Added support for `GRREFERENCEDX` in generic refinement region coding.
