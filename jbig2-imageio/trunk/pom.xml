@@ -4,7 +4,7 @@
 	<groupId>com.levigo.jbig2</groupId>
 	<artifactId>levigo-jbig2-imageio</artifactId>
 	<name>jbig2-imageio</name>
-	<version>1.6.1-SNAPSHOT</version>
+	<version>1.6.1</version>
 
 	<distributionManagement>
 		<repository>
@@ -14,7 +14,7 @@
 	</distributionManagement>
 
 	<scm>
-		<developerConnection>scm:svn:https://jbig2-imageio.googlecode.com/svn/jbig2-imageio/trunk</developerConnection>
+		<developerConnection>scm:svn:https://jbig2-imageio.googlecode.com/svn/jbig2-imageio/tags/levigo-jbig2-imageio-1.6.1</developerConnection>
 	</scm>
 
 	<dependencies>
