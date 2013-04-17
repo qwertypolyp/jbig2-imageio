@@ -1,6 +1,6 @@
 release-notes.txt
 
-Version 1.6.1 (Planned: 2013-04-18)
+Version 1.6.1 (2013-04-18)
 
 * IMPROVEMENT Issue 11 : Added support for GRREFERENCEDX in generic refinement region coding. 
 
