@@ -17,3 +17,7 @@ Several formats allow to embed JBIG2-compressed data in its own structure. PDF, 
 The reader recognizes if the input data is headless and so embedded. This is assumed if the file header is missing.
 
 You can also specify that the coming input data is embedded by using the special constructor in `JBIG2ImageReader`. 
+
+= What if the plugin is on classpath but not seen? =
+
+ImageIO is able to scan the classpath for readers and writers. Call `ImageIO.scanForPlugins()` if the reader is not seen. (Thanks to George Sexton for this tip in context of using ImageIO within Apache Tomcat)
