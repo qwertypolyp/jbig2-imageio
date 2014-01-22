@@ -121,8 +121,9 @@ public class Bitmaps {
 
   private static WritableRaster buildRaster(final Bitmap bitmap, final FilterType filterType, final double scaleX,
       final double scaleY) {
-    final Rectangle dstBounds = new Rectangle(0, 0, (int) Math.ceil(bitmap.getWidth() * scaleX),
-        (int) Math.ceil(bitmap.getHeight() * scaleY));
+    final Rectangle dstBounds = new Rectangle(0, 0, //
+        (int) Math.round(bitmap.getWidth() * scaleX), //
+        (int) Math.round(bitmap.getHeight() * scaleY));
 
     final WritableRaster dst = WritableRaster.createInterleavedRaster(DataBuffer.TYPE_BYTE, dstBounds.width,
         dstBounds.height, 1, new Point());
